@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Element } from "../../components/Element/Element";
 import { SearchResultIn } from "../../components/SearchResultIn/SearchResultIn";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
+import { API_BASE_URL } from "../../api/config";
 
 import preIcon from "./pre_icon.svg";
 
@@ -30,7 +31,7 @@ const SearchDetail = () => {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://127.0.0.1:8000/drugs/search?q=${encodeURIComponent(query)}`
+          `${API_BASE_URL}/drugs/search?q=${encodeURIComponent(query)}`
         );
         const data = await res.json();
         setResults(Array.isArray(data) ? data : []);

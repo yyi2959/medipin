@@ -53,6 +53,28 @@
       ]
     },
     {
+      "id": "src/pages/EditMyPage/Editmypage.jsx",
+      "label": "Editmypage",
+      "routes": [
+        "/edit-mypage"
+      ]
+    },
+    {
+      "id": "src/pages/AddFamily/AddFamily.jsx",
+      "label": "AddFamily",
+      "routes": [
+        "/add-family"
+      ]
+    },
+    {
+      "id": "src/pages/Calendar/Calendar.jsx",
+      "label": "Calendar",
+      "routes": [
+        "/pill-management",
+        "/calendar"
+      ]
+    },
+    {
       "id": "src/pages/Map_main/MapMain.jsx",
       "label": "MapMain",
       "routes": [
@@ -64,13 +86,6 @@
       "label": "MapRInfo",
       "routes": [
         "/map/detail/:name"
-      ]
-    },
-    {
-      "id": "src/pages/Calendar/Calendar.jsx",
-      "label": "Calendar",
-      "routes": [
-        "/calendar"
       ]
     },
     {
@@ -378,6 +393,22 @@
       }
     },
     {
+      "id": "src\\pages\\EditMyPage\\Editmypage.jsx:22:16-to-src\\pages\\Login\\Login.jsx",
+      "source": "src\\pages\\EditMyPage\\Editmypage.jsx",
+      "target": "src\\pages\\Login\\Login.jsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate(\"/login\")",
+          "line": 22,
+          "endLine": 22,
+          "column": 16,
+          "endColumn": 34,
+          "sourceFile": "src\\pages\\EditMyPage\\Editmypage.jsx"
+        }
+      }
+    },
+    {
       "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
@@ -602,15 +633,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:150:56-to-src\\pages\\Search\\Search.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:149:56-to-src\\pages\\Search\\Search.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Search\\Search.jsx",
       "data": {
         "viaRoute": "/search",
         "trigger": {
           "element": "navigate(\"/search\")",
-          "line": 150,
-          "endLine": 150,
+          "line": 149,
+          "endLine": 149,
           "column": 56,
           "endColumn": 75,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -618,15 +649,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:156:53-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:155:53-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 156,
-          "endLine": 156,
+          "line": 155,
+          "endLine": 155,
           "column": 53,
           "endColumn": 69,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"

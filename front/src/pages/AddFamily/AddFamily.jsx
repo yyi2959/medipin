@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../MyPage/style.css"; // Reuse MyPage/EditMyPage styles
+import { API_BASE_URL } from "../../api/config";
 
 const AddFamily = () => {
     const navigate = useNavigate();
@@ -42,7 +43,7 @@ const AddFamily = () => {
         };
 
         try {
-            const res = await fetch("http://127.0.0.1:8000/user/family", {
+            const res = await fetch(`${API_BASE_URL}/user/family`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { InputBar } from "../../components/InputBar/InputBar";
 import FilterIconGroup from "../../components/FilterIconGroup/FilterIconGroup";
 import MapList from "../../components/MapList/MapList";
-import { HomeBar } from "../../components/HomeBar/HomeBar"; // HomeBar 추가
+import { HomeBar } from "../../components/HomeBar/HomeBar";
+import { API_BASE_URL } from "../../api/config"; // HomeBar 추가
 import ambulanceIcon from "../../assets/ambulance.svg";
 
 import "./style.css";
@@ -43,7 +44,7 @@ export const MapMain = () => {
     favorites: false,
   });
 
-  const API_URL = "http://127.0.0.1:8000/map";
+  const API_URL = `${API_BASE_URL}/map`;
 
   /* 필터 토글 */
   const toggleFilter = (key) => {

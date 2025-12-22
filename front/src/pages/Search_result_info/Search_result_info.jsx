@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { API_BASE_URL } from "../../api/config";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import preIcon from "./pre_icon.svg";
 import pillPic from "./pill_pic.svg";
@@ -42,7 +43,7 @@ const SearchResultInfo = () => {
     const fetchDetail = async () => {
       try {
         const res = await fetch(
-          `http://127.0.0.1:8000/drugs/${drugId}`
+          `${API_BASE_URL}/drugs/${drugId}`
         );
         if (!res.ok) {
           throw new Error(`API 호출 실패: ${res.status}`);

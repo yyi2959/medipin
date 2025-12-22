@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     MYSQL_PORT: str
     MYSQL_DB: str
     REDIS_URL: str
-    DATABASE_URL: str
+    # DATABASE_URL: str  <-- Commented out to force usage of property below
 
     @property
     def DATABASE_URL(self):
@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 
 settings = Settings()

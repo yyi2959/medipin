@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../api/config";
 
 import { AiIcon } from "../../components/AiIcon";
 import { ChatbubbleEllipsesOutline } from "../../components/ChatbubbleEllipsesOutline";
@@ -46,7 +47,7 @@ const ChattingMain = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/chatbot/", {
+      const response = await fetch(`${API_BASE_URL}/chatbot/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

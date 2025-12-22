@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../api/config";
 import "./style.css"; // Reuse MyPage styles or create new
 
 const EditMyPage = () => {
@@ -23,7 +24,7 @@ const EditMyPage = () => {
                 return;
             }
             try {
-                const res = await fetch("http://127.0.0.1:8000/user/profile", {
+                const res = await fetch(`${API_BASE_URL}/user/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -51,7 +52,7 @@ const EditMyPage = () => {
         e.preventDefault();
         const token = localStorage.getItem("authToken");
         try {
-            const res = await fetch("http://127.0.0.1:8000/user/profile/detail", {
+            const res = await fetch(`${API_BASE_URL}/user/profile/detail`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

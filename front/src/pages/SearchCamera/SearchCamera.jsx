@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { API_BASE_URL } from "../../api/config";
 import { SearchSwitcher } from "./SearchSwitcher";
 import "./style.css";
 
@@ -65,7 +66,7 @@ export const SearchCamera = () => {
 
         try {
           const res = await fetch(
-            "http://127.0.0.1:8000/api/ocr/prescription",
+            `${API_BASE_URL}/api/ocr/prescription`,
             {
               method: "POST",
               body: formData,

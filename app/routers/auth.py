@@ -7,7 +7,7 @@ from app.services.user_service import register_user
 from app.models.user import UserProfile
 from app.models.refresh_token import RefreshToken
 from app.security.password_handler import verify_password
-from app.security.jwt_handler import create_access_token, create_refresh_token
+from app.security.jwt_handler import create_access_token, create_refresh_token, get_current_user
 from datetime import datetime
 
 auth_router = APIRouter(prefix="", tags=["Authentication"])

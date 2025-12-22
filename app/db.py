@@ -20,10 +20,11 @@ def get_db():
 
 def get_conn():
     return pymysql.connect(
-        host="localhost",
-        user="root",
-        password="mysqlbig",
-        database="medipin",
+        host=settings.MYSQL_HOST,
+        user=settings.MYSQL_USER,
+        password=settings.MYSQL_PASSWORD,
+        database=settings.MYSQL_DB,
+        port=int(settings.MYSQL_PORT),
         charset="utf8mb4",
         cursorclass=pymysql.cursors.DictCursor
     )
