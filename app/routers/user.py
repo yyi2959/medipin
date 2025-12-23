@@ -87,3 +87,43 @@ def update_profile_detail(
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"프로필 수정 중 오류 발생: {e}")
+
+# =======================================================
+# 4. 가족 구성원 수정 및 삭제
+# =======================================================
+from app.schemas.user import FamilyMemberUpdate
+
+@user_router.put("/family/{member_id}", response_model=UserBase)
+def update_family_member(
+    member_id: int,
+    update_data: FamilyMemberUpdate,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """ 가족 구성원의 정보를 수정합니다. (본인 소유인지 확인) """
+    member = db.query(UserProfile).filter(UserProfile.id == member_id, UserProfile.user_id == current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Family member not found")
+
+    update_dict = update_data.dict(exclude_unset=True)
+    for key, value in update_dict.items():
+        setattr(member, key, value)
+    
+    db.commit()
+    db.refresh(member)
+    return member
+
+@user_router.delete("/family/{member_id}")
+def delete_family_member(
+    member_id: int,
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """ 가족 구성원을 삭제합니다. """
+    member = db.query(UserProfile).filter(UserProfile.id == member_id, UserProfile.user_id == current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Family member not found")
+    
+    db.delete(member)
+    db.commit()
+    return {"status": "success", "message": "Family member deleted"}

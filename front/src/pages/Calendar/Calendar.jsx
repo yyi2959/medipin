@@ -51,7 +51,9 @@ const Calendar = () => {
     });
 
     const API_URL = `${API_BASE_URL}/medication`;
-    const USER_ID = 1; // 임시 사용자 ID (로그인 연동 시 변경 필요)
+    // const USER_ID = 1; 
+    const storedUserId = localStorage.getItem("userId");
+    const USER_ID = storedUserId ? parseInt(storedUserId) : 1; // Fallback or handle error
 
     // --- 데이터 패칭 ---
     useEffect(() => {

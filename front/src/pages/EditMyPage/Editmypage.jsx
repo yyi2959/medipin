@@ -35,7 +35,10 @@ const EditMyPage = () => {
                         email: data.email || "",
                         phone_number: data.phone_number || "",
                         birthdate: data.birthdate || "",
-                        gender: data.gender || "male"
+                        gender: data.gender || "male",
+                        height: data.height || "",
+                        weight: data.weight || "",
+                        special_note: data.special_note || ""
                     });
                 }
             } catch (err) {
@@ -145,6 +148,40 @@ const EditMyPage = () => {
                         <option value="male">남성</option>
                         <option value="female">여성</option>
                     </select>
+                </div>
+
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <div style={{ flex: 1 }}>
+                        <label>키 (cm)</label>
+                        <input
+                            type="number"
+                            name="height"
+                            value={formData.height}
+                            onChange={handleChange}
+                            style={{ width: '100%', padding: '10px' }}
+                        />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <label>몸무게 (kg)</label>
+                        <input
+                            type="number"
+                            name="weight"
+                            value={formData.weight}
+                            onChange={handleChange}
+                            style={{ width: '100%', padding: '10px' }}
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label>특이사항 (알러지 등)</label>
+                    <textarea
+                        name="special_note"
+                        value={formData.special_note}
+                        onChange={handleChange}
+                        rows={3}
+                        style={{ width: '100%', padding: '10px' }}
+                    />
                 </div>
 
                 <button

@@ -37,14 +37,26 @@ class UserProfileUpdate(BaseModel):
     """ 프로필 편집 창에서 사용자 상세 정보 수정 요청 """
     name: Optional[str] = None
     pw: Optional[str] = None
-    email: Optional[str] = None # DB 칼럼 이름에 맞춤
-    phone_num: Optional[str] = None # DB 칼럼 이름(user.py에서 phone_num으로 가정)에 맞춤
+    email: Optional[str] = None
+    phone_num: Optional[str] = None
     birth_date: Optional[date] = None 
     gender: Optional[str] = None
+    height: Optional[float] = None       # ✅ Added
+    weight: Optional[float] = None       # ✅ Added
+    special_note: Optional[str] = None   # ✅ Added
 
 class FamilyMemberRequest(BaseModel):
     """ 가족 구성원 등록 요청 스키마 """
     name: str
+    age: Optional[int] = None
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    special_note: Optional[str] = None
+
+class FamilyMemberUpdate(BaseModel):     # ✅ New Schema for updating family
+    name: Optional[str] = None
     age: Optional[int] = None
     birth_date: Optional[date] = None
     gender: Optional[str] = None
