@@ -105,15 +105,15 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\Login\\Login.jsx:56:14-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\pages\\Login\\Login.jsx:59:14-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Login\\Login.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 56,
-          "endLine": 56,
+          "line": 59,
+          "endLine": 59,
           "column": 14,
           "endColumn": 38,
           "sourceFile": "src\\pages\\Login\\Login.jsx"
@@ -121,17 +121,17 @@
       }
     },
     {
-      "id": "src\\pages\\Login\\Login.jsx:104:27-to-src\\pages\\Register\\Register.jsx",
+      "id": "src\\pages\\Login\\Login.jsx:99:54-to-src\\pages\\Register\\Register.jsx",
       "source": "src\\pages\\Login\\Login.jsx",
       "target": "src\\pages\\Register\\Register.jsx",
       "data": {
         "viaRoute": "/register",
         "trigger": {
           "element": "navigate(\"/register\")",
-          "line": 104,
-          "endLine": 104,
-          "column": 27,
-          "endColumn": 48,
+          "line": 99,
+          "endLine": 99,
+          "column": 54,
+          "endColumn": 75,
           "sourceFile": "src\\pages\\Login\\Login.jsx"
         }
       }
