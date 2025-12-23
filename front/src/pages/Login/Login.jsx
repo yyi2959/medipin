@@ -1,10 +1,12 @@
 // src/pages/Login/Login.jsx
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../api/config";
 import { Button } from "../../components/Button";
 import { Element } from "../../components/Element";
 import { Warning } from "../../components/Warning/Warning";
-import { useNavigate } from "react-router-dom";
+import { setTokens } from "../../auth/token";
 import "./style.css";
 
 export const Login = () => {
@@ -13,17 +15,18 @@ export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ✅ Warning 상태
+  // Warning 상태
   const [warningType, setWarningType] = useState("hidden");
 
   const handleLogin = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/login", {
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
+      // FastAPI가 JSON으로 응답하므로 그대로 파싱
       const data = await res.json();
 
       if (res.ok) {
@@ -32,6 +35,7 @@ export const Login = () => {
       } else {
         // 🔴 비밀번호 불일치
         setWarningType("incorrect-password");
+        return;
       }
     } catch {
       // 🔴 서버 오류도 로그인 실패로 처리
@@ -47,7 +51,6 @@ export const Login = () => {
 
   return (
     <div className="login">
-      {/* ✅ Warning (클릭 시 닫힘) */}
       {warningType !== "hidden" && (
         <Warning
           one={warningType}
@@ -60,10 +63,8 @@ export const Login = () => {
         />
       )}
 
-      {/* Header */}
       <Element variant="simple" />
 
-      {/* Login Form */}
       <div className="frame-2">
         <div className="frame-3">
           <div className="text-wrapper-2">Welcome</div>
@@ -92,22 +93,14 @@ export const Login = () => {
           </div>
         </div>
 
-        <Button
-          one="login"
-          className="button-instance"
-          onClick={handleLogin}
-        />
+        <Button one="login" className="button-instance" onClick={handleLogin} />
 
         <div className="frame-5">
-          <p
-            className="don-t-have-an"
-            onClick={() => navigate("/register")}
-          >
+          <p className="don-t-have-an" onClick={() => navigate("/register")}>
             <span className="span">Don’t have an account?</span>
             <span className="text-wrapper-4"> Sign Up</span>
           </p>
 
-          {/* 🔵 forget password → 안내 경고 */}
           <div
             className="text-wrapper-5"
             onClick={() => setWarningType("forget-password")}

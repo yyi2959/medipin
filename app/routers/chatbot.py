@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.security.jwt_handler import get_current_user
+from app.models.user import UserProfile
 
 # 🚨 schemas 파일이 존재한다고 가정
 from app.schemas.chatbot import ChatRequest, ChatResponse
@@ -18,13 +19,13 @@ chatbot_router = APIRouter(prefix="/chatbot", tags=["Chatbot"])
 def chatbot_query(
     payload: ChatRequest,
     db: Session = Depends(get_db),
-    current_user_id: int = Depends(get_current_user)
+    current_user: UserProfile = Depends(get_current_user)
 ):
     """
     로그인한 주사용자의 질문에 대해 DB 정보를 기반으로 답변합니다.
     (JWT 인증 필요)
     """
-    if current_user_id is None:
+    if not current_user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="인증되지 않은 사용자입니다."
@@ -33,7 +34,7 @@ def chatbot_query(
     try:
         response_text = generate_chatbot_response(
             db, 
-            user_id=current_user_id, 
+            user_id=current_user.id, 
             question=payload.question
         )
     except Exception as e:

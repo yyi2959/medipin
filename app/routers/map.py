@@ -165,4 +165,59 @@ def get_pharmacies(
             "tel": r.tel,
         }
         for r in rows
+
     ]
+
+@map_router.get("/hospitals/emergency")
+def get_emergency_hospitals(
+    db: Session = Depends(get_db),
+    north: float = Query(None),
+    south: float = Query(None),
+    east: float = Query(None),
+    west: float = Query(None)
+):
+    # SQL Query optimized for 'LIKE' search on departments
+    query_str = """
+        SELECT
+            name,
+            y AS lat,
+            x AS lng,
+            address,
+            tel,
+            homepage,
+            departments
+        FROM master_medical
+        WHERE x IS NOT NULL
+          AND y IS NOT NULL
+          AND (departments LIKE :kw1 OR departments LIKE :kw2)
+    """
+    params = {
+        "kw1": "%응급의학과%",
+        "kw2": "%한방응급%"
+    }
+    
+    if north is not None and south is not None and east is not None and west is not None:
+        query_str += " AND y BETWEEN :south AND :north AND x BETWEEN :west AND :east"
+        params.update({"south": south, "north": north, "west": west, "east": east})
+    
+    query_str += " LIMIT 500"
+
+    try:
+        rows = db.execute(text(query_str), params).fetchall()
+        
+        results = []
+        for r in rows:
+            results.append({
+                "name": r.name.strip() if r.name else "",
+                "lat": float(r.lat),
+                "lng": float(r.lng),
+                "address": r.address.strip() if r.address else "",
+                "tel": r.tel.strip() if r.tel else "",
+                "homepage": r.homepage.strip() if hasattr(r, 'homepage') and r.homepage else "",
+                # 'departments': r.departments # Optional: include if needed on frontend
+            })
+        return results
+
+    except Exception as e:
+        print(f"Error fetching emergency hospitals: {e}")
+        return []

@@ -1,4 +1,5 @@
 // Sidebar.jsx
+import "./style.css";
 export default function Sidebar({
   radius,
   setRadius,

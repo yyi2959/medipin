@@ -78,7 +78,7 @@
 .filter-item.active {
   background-color: #9F63FF;
   /* 활성 상태 보라색 */
-  color: #000 !important;
+  color: #ffffff !important;
   /* ⭐ 텍스트 흰색 강제 */
   border-color: #9F63FF;
   box-shadow: 0 4px 8px rgba(159, 99, 255, 0.3);

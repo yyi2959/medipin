@@ -43,12 +43,14 @@ class UserProfileUpdate(BaseModel):
     gender: Optional[str] = None
 
 class FamilyMemberRequest(BaseModel):
-    """ 가족 구성원 등록 요청 스키마 (프로필 생성용) """
+    """ 가족 구성원 등록 요청 스키마 """
     name: str
-    age: int
-    height: float | None = None
-    weight: float | None = None
-    special_note: str | None = None
+    age: Optional[int] = None
+    birth_date: Optional[date] = None
+    gender: Optional[str] = None
+    height: Optional[float] = None
+    weight: Optional[float] = None
+    special_note: Optional[str] = None
 
 
 # ===============================================

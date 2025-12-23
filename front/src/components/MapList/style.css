@@ -108,3 +108,75 @@
     font-size: 11px;
     color: #666;
 }
+
+/* 상세 뷰 스타일 */
+.detail-view {
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* 중앙 정렬 */
+    gap: 16px;
+}
+
+.back-btn {
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 0px;
+}
+
+.detail-image-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.detail-image {
+    width: 30%;
+    /* 아이콘 크기 30%로 축소 */
+    object-fit: contain;
+}
+
+.detail-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 4px;
+}
+
+.detail-badge {
+    display: inline-block;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    width: fit-content;
+}
+
+.detail-row {
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    color: #333;
+    align-items: flex-start;
+}
+
+.detail-row .label {
+    min-width: 60px;
+    color: #888;
+    font-weight: 500;
+}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom"; // ✅ useLocation 추가
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO } from "date-fns";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
+import { API_BASE_URL } from "../../api/config";
 /* 아이콘들 */
 import preIcon from "../Search_detail/pre_icon.svg";
 import "./style.css";
@@ -48,13 +50,28 @@ const Calendar = () => {
         memo: "",
     });
 
-    const API_URL = "http://localhost:8000/medication";
+    const API_URL = `${API_BASE_URL}/medication`;
     const USER_ID = 1; // 임시 사용자 ID (로그인 연동 시 변경 필요)
 
     // --- 데이터 패칭 ---
     useEffect(() => {
         fetchSchedules();
     }, [currentMonth]);
+
+    const location = useLocation(); // ✅ Hook 사용
+
+    // 검색 페이지에서 넘어왔을 때 자동 실행
+    useEffect(() => {
+        if (location.state?.addPillName) {
+            // 시트 열면서 이름 전달
+            // setTimeout 없이도 동작하지만, 애니메이션/렌더링 순서 고려하여 약간 지연 가능
+            setTimeout(() => {
+                openAddSheet({ pill_name: location.state.addPillName });
+            }, 100);
+
+            // 상태 초기화 (새로고침 시 방지) - history replace로 state 제거 가능하지만 생략
+        }
+    }, [location.state]);
 
     const fetchSchedules = async () => {
         setLoading(true);
@@ -331,11 +348,18 @@ const Calendar = () => {
         }
     };
 
-    const openAddSheet = () => {
+    const openAddSheet = (initialData = null) => {
         setIsAddMode(true);
         setAddSheetHeight(85);
-        if (!editId) {
-            // 수정 모드가 아닐 때만 초기화 (handleEditClick에서 호출 시 editId가 이미 셋팅됨)
+
+        if (initialData) {
+            // 전달된 초기값이 있으면 설정 (기존 formData 유지하면서 병합)
+            setFormData(prev => ({
+                ...prev,
+                ...initialData
+            }));
+        } else if (!editId) {
+            // 수정 모드가 아닐 때만 초기화
             setFormData({
                 pill_name: "",
                 dose: "",

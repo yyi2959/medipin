@@ -47,7 +47,7 @@ class ScheduleResponse(BaseModel):
     created_at: Optional[datetime]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 @router.post("/schedule", response_model=ScheduleResponse)
 def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):

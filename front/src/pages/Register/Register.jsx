@@ -6,8 +6,9 @@ import { Warning } from "../../components/Warning/Warning";
 import { useNavigate } from "react-router-dom";
 import line from "./line.svg";
 import "./style.css";
+import { API_BASE_URL } from "../../api/config";
 
-const API_URL = "http://127.0.0.1:8000/register";
+const API_URL = `${API_BASE_URL}/register`;
 
 const Register = () => {
   const navigate = useNavigate();

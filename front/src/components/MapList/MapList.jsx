@@ -8,7 +8,7 @@ const SHEET = {
     FULL: "FULL",
 };
 
-const MapList = ({ sheetState, setSheetState, places = [] }) => {
+const MapList = ({ sheetState, setSheetState, places = [], selectedPlace, setSelectedPlace }) => {
     const sheetRef = useRef(null);
     const startY = useRef(0);
     const currentY = useRef(0);
@@ -71,8 +71,14 @@ const MapList = ({ sheetState, setSheetState, places = [] }) => {
     };
 
     const handleCardClick = (place) => {
-        // 상세 페이지로 이동 (이름을 URL 파라미터로, 상세 데이터는 state로 전달)
-        navigate(`/map/detail/${place.name}`, { state: place });
+        // 상세 페이지 이동 대신, 내부 상태 변경으로 Detail View 전환
+        setSelectedPlace(place);
+        // 바텀시트가 닫혀있거나 최소화 상태면 올리기 (UX)
+        if (sheetState === SHEET.CLOSED) setSheetState(SHEET.MIN);
+    };
+
+    const handleBackToList = () => {
+        setSelectedPlace(null);
     };
 
     return (
@@ -91,40 +97,87 @@ const MapList = ({ sheetState, setSheetState, places = [] }) => {
                 <div className="handle-bar" />
             </div>
 
-            {/* 리스트 컨텐츠 */}
+            {/* 리스트 컨텐츠 or 상세 컨텐츠 */}
             <div className="list-content">
-                {places.length === 0 ? (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
-                        검색 결과가 없습니다.
+                {selectedPlace ? (
+                    // --- 상세 뷰 ---
+                    <div className="detail-view">
+                        <button className="back-btn" onClick={handleBackToList}>
+                            &larr; 목록으로
+                        </button>
+                        <div className="detail-image-wrapper">
+                            <img
+                                src={selectedPlace.type === 'hospital'
+                                    ? "https://postfiles.pstatic.net/MjAyNTEyMDlfODYg/MDAxNzY1MjU4NTgxMTE3.OR1zSpBxdcgRJ3VwdV_GHl9qojPdx9JQmyy2Bz-XQ8og.aSJDea3drP1B7zcwZc-V02F42kqp3XR9BR7liqI8h40g.PNG/hospital.png?type=w966"
+                                    : selectedPlace.type === 'emergency'
+                                        ? "/ambulance.svg"
+                                        : selectedPlace.type === 'convenience'
+                                            ? "https://postfiles.pstatic.net/MjAyNTEyMDlfMjUx/MDAxNzY1MjU4NTgxMTE3.Ruq6sQhusMsEEGY4E5bDbIDr5CdgsO3FM9urY0_iykwg.dm7HDIzMQOfLV3zzyl80gPdXdW54XNJWjDEVKuCg6_Qg.PNG/conveni.png?type=w966"
+                                            : "https://postfiles.pstatic.net/MjAyNTEyMDlfMjY1/MDAxNzY1MjU4ODI0ODI4._p_9MD5vjkfIGL_iIUBCSVHhx5JTAG9wqhRkxrmuei0g.Mo5O6ZABPabGYjuAScmOmCcab_BYlKUwcf-SjEnWVk0g.PNG/pill-removebg-preview.png?type=w966"
+                                }
+                                alt={selectedPlace.name}
+                                className="detail-image"
+                            />
+                        </div>
+                        <div className="detail-info">
+                            <h2 className="detail-name">{selectedPlace.name}</h2>
+                            <span className="detail-badge">영업중</span>
+                            <div className="detail-row">
+                                <span className="label">주소</span>
+                                <span>{selectedPlace.address}</span>
+                            </div>
+                            <div className="detail-row">
+                                <span className="label">전화</span>
+                                <span>{selectedPlace.tel || selectedPlace.phone || "정보 없음"}</span>
+                            </div>
+                            {selectedPlace.homepage && (
+                                <div className="detail-row">
+                                    <span className="label">홈페이지</span>
+                                    <a href={selectedPlace.homepage} target="_blank" rel="noreferrer" style={{ color: '#9F63FF' }}>
+                                        방문하기
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 ) : (
-                    places.map((place, index) => (
-                        <div
-                            key={index}
-                            className="place-card"
-                            onClick={() => handleCardClick(place)} // 🚨 클릭 이벤트 추가
-                        >
-                            <div className="place-image-wrapper">
-                                {/* 실제 이미지 URL이 있으면 사용, 없으면 플레이스홀더 */}
-                                <img
-                                    src={place.type === 'hospital'
-                                        ? "https://postfiles.pstatic.net/MjAyNTEyMDlfODYg/MDAxNzY1MjU4NTgxMTE3.OR1zSpBxdcgRJ3VwdV_GHl9qojPdx9JQmyy2Bz-XQ8og.aSJDea3drP1B7zcwZc-V02F42kqp3XR9BR7liqI8h40g.PNG/hospital.png?type=w966"
-                                        : "https://postfiles.pstatic.net/MjAyNTEyMDlfMjY1/MDAxNzY1MjU4ODI0ODI4._p_9MD5vjkfIGL_iIUBCSVHhx5JTAG9wqhRkxrmuei0g.Mo5O6ZABPabGYjuAScmOmCcab_BYlKUwcf-SjEnWVk0g.PNG/pill-removebg-preview.png?type=w966"
-                                    }
-                                    alt={place.name}
-                                    className="place-image"
-                                />
-                            </div>
-                            <div className="place-info">
-                                <div className="place-header">
-                                    <span className="place-name">{place.name}</span>
-                                </div>
-                                <div className="place-status active">영업중</div>
-                                <div className="place-address">{place.address}</div>
-                                <div className="place-phone">{place.phone || "052)000-0000"}</div>
-                            </div>
+                    // --- 리스트 뷰 ---
+                    places.length === 0 ? (
+                        <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>
+                            검색 결과가 없습니다.
                         </div>
-                    ))
+                    ) : (
+                        places.map((place, index) => (
+                            <div
+                                key={index}
+                                className="place-card"
+                                onClick={() => handleCardClick(place)}
+                            >
+                                <div className="place-image-wrapper">
+                                    <img
+                                        src={place.type === 'hospital'
+                                            ? "https://postfiles.pstatic.net/MjAyNTEyMDlfODYg/MDAxNzY1MjU4NTgxMTE3.OR1zSpBxdcgRJ3VwdV_GHl9qojPdx9JQmyy2Bz-XQ8og.aSJDea3drP1B7zcwZc-V02F42kqp3XR9BR7liqI8h40g.PNG/hospital.png?type=w966"
+                                            : place.type === 'emergency'
+                                                ? "/ambulance.svg"
+                                                : place.type === 'convenience'
+                                                    ? "https://postfiles.pstatic.net/MjAyNTEyMDlfMjUx/MDAxNzY1MjU4NTgxMTE3.Ruq6sQhusMsEEGY4E5bDbIDr5CdgsO3FM9urY0_iykwg.dm7HDIzMQOfLV3zzyl80gPdXdW54XNJWjDEVKuCg6_Qg.PNG/conveni.png?type=w966"
+                                                    : "https://postfiles.pstatic.net/MjAyNTEyMDlfMjY1/MDAxNzY1MjU4ODI0ODI4._p_9MD5vjkfIGL_iIUBCSVHhx5JTAG9wqhRkxrmuei0g.Mo5O6ZABPabGYjuAScmOmCcab_BYlKUwcf-SjEnWVk0g.PNG/pill-removebg-preview.png?type=w966"
+                                        }
+                                        alt={place.name}
+                                        className="place-image"
+                                    />
+                                </div>
+                                <div className="place-info">
+                                    <div className="place-header">
+                                        <span className="place-name">{place.name}</span>
+                                    </div>
+                                    <div className="place-status active">영업중</div>
+                                    <div className="place-address">{place.address}</div>
+                                    <div className="place-phone">{place.tel || place.phone || "정보 없음"}</div>
+                                </div>
+                            </div>
+                        ))
+                    )
                 )}
             </div>
         </div>

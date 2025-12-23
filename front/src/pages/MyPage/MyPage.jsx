@@ -1,95 +1,158 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "./Button"; 
+import { Button } from "./Button";
 import "./style.css";
 
 // 누락된 이미지/아이콘 컴포넌트 임시 대체
-const User = () => <div style={{width: 30, height: 30, backgroundColor: '#ccc', borderRadius: '50%'}} />;
-const SearchOutline = () => <div style={{width: 30, height: 30, backgroundColor: '#ccc'}} />;
-const Pill = () => <div style={{width: 30, height: 30, backgroundColor: '#ccc'}} />;
+const User = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc', borderRadius: '50%' }} />;
+const SearchOutline = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc' }} />;
+const Pill = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc' }} />;
+
+import { useEffect, useState } from "react";
+
+// Icons 
+const UserIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
+const SearchIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
+const PillIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="6" width="20" height="12" rx="6" ry="6"></rect>
+  </svg>
+);
+const LogoutIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+    <polyline points="16 17 21 12 16 7"></polyline>
+    <line x1="21" y1="12" x2="9" y2="12"></line>
+  </svg>
+);
+const ChevronRight = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+);
 
 export const MyPageScreen = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState({ name: "MediPin User", email: "loading...", age: 0 });
+  const [familyMembers, setFamilyMembers] = useState([]);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      try {
+        // 1. Fetch Main Profile
+        const profileRes = await fetch("http://127.0.0.1:8000/user/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (profileRes.ok) {
+          const data = await profileRes.json();
+          setUser(data);
+        }
+
+        // 2. Fetch Family Members
+        const familyRes = await fetch("http://127.0.0.1:8000/user/family", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (familyRes.ok) {
+          const familyData = await familyRes.json();
+          setFamilyMembers(familyData);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    };
+    fetchAllData();
+  }, []);
+
+  const MenuRow = ({ icon: Icon, label, onClick, showBorder = true }) => (
+    <div className="menu-row" onClick={onClick}>
+      <div className="menu-icon-wrapper">
+        <Icon />
+      </div>
+      <div className="menu-label">{label}</div>
+      <div className="menu-arrow"><ChevronRight /></div>
+    </div>
+  );
 
   return (
-    <div className="my-page-screen">
-      <div className="rectangle-2" />
-
-      {/* 상단 헤더 영역 */}
-      <div className="frame-3">
-        <div className="group" onClick={() => navigate("/search_main")} style={{cursor: 'pointer'}}>
-          <div className="fill">🏠</div>
-        </div>
-        <div className="my-page-2" style={{textAlign: 'center', fontWeight: 'bold'}}>MY PAGE</div>
-        <div className="trailing-icon">
-          <div className="container">
-            <div className="state-layer">
-              <div className="icon-notification" />
-            </div>
-          </div>
-        </div>
+    <div className="my-page-container">
+      {/* Header */}
+      <div className="mypage-header">
+        <button onClick={() => navigate(-1)} className="back-btn">⬅</button>
+        <div className="header-title">My page</div>
+        <div style={{ width: 24 }}></div>
       </div>
 
-      {/* 메뉴 리스트 영역 */}
-      <div className="frame-4">
-        {/* 1. 내 정보 수정 -> Editmypage.jsx 연결 예정 */}
-        <div 
-          className="frame-5" 
-          style={{cursor: 'pointer'}} 
-          onClick={() => navigate("/edit-mypage")}
-        >
-          <User className="icon-feathericons" />
-          <div className="frame-6">
-            <span className="edit-profile">내 정보 수정</span>
-            <span className="ic-baseline-greater">&gt;</span>
-          </div>
-        </div>
-        
-        {/* 2. 검색 기록 */}
-        <div 
-          className="frame-5" 
-          style={{cursor: 'pointer', marginTop: '20px'}}
-          onClick={() => navigate("/search_detail")}
-        >
-          <SearchOutline className="icon-instance-node" />
-          <div className="frame-6">
-            <span className="search-list">검색 기록</span>
-            <span className="ic-baseline-greater">&gt;</span>
-          </div>
-        </div>
-
-        {/* 3. 복용 약 관리 */}
-        <div 
-          className="frame-5" 
-          style={{cursor: 'pointer', marginTop: '20px'}}
-          onClick={() => navigate("/pill-management")}
-        >
-          <Pill className="icon-instance-node" />
-          <div className="frame-6">
-            <span className="pill-list">복용 약 관리</span>
-            <span className="ic-baseline-greater">&gt;</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 프로필 정보 영역 */}
-      <div className="frame-7">
-        <div className="my-page-wrapper">
-          <div className="frame-wrapper">
-            <div className="frame-8">
-              <div className="frame-9">
-                <div className="text-wrapper-5">MediPin User</div>
-                <div className="text-wrapper-9">medipin@gmail.com</div>
+      <div className="content-scrollable">
+        {/* 1. Family Cards Section (Carousel style if many) */}
+        <div className="section-label">Family Members</div>
+        {familyMembers.map((member) => (
+          <div key={member.id} className="profile-card family-card">
+            <div className="card-left">
+              <div className="profile-name">{member.name}</div>
+              <div className="profile-detail-row">
+                <span className="detail-label">Birthdate</span>
+                <span className="detail-value">{member.birthdate || "-"}</span>
               </div>
-              <div className="change-user-wrapper" style={{cursor: 'pointer'}}>
-                <div className="change-user">Change</div>
+              <div className="profile-detail-row">
+                <span className="detail-label">Age</span>
+                <span className="detail-value">{member.age || "-"}</span>
               </div>
             </div>
+            <div className="card-right">
+              <button className="change-user-btn" onClick={() => alert(`Switched to ${member.name}`)}>
+                Change<br />User
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* 2. Add Button */}
+        <button className="add-family-btn" onClick={() => navigate("/add-family")}>
+          +
+        </button>
+
+        {/* 3. Main User Card */}
+        <div className="section-label" style={{ marginTop: 20 }}>Main User</div>
+        <div className="profile-card user-card">
+          <div className="user-avatar">
+            <UserIcon /> {/* Placeholder for image */}
+          </div>
+          <div className="user-info-col">
+            <div className="profile-name">{user.name}</div>
+            <div className="user-email">{user.email}</div>
           </div>
         </div>
+
+        {/* 4. Menu List */}
+        <div className="menu-list-container">
+          <MenuRow icon={UserIcon} label="Edit profile" onClick={() => navigate("/edit-mypage")} />
+          <div className="menu-divider"></div>
+          <MenuRow icon={SearchIcon} label="Search List" onClick={() => navigate("/search/detail")} />
+          <div className="menu-divider"></div>
+          <MenuRow icon={PillIcon} label="Pill List" onClick={() => navigate("/pill-management")} />
+          <div className="menu-divider"></div>
+          <MenuRow icon={LogoutIcon} label="Logout" onClick={() => {
+            localStorage.removeItem("authToken");
+            navigate("/login");
+          }} />
+        </div>
+
+        {/* Padding for bottom nav */}
+        <div style={{ height: 80 }}></div>
       </div>
-      
-      {/* 임시 하단 바 삭제됨 (MainLayout의 하단바가 적용됨) */}
     </div>
   );
 };

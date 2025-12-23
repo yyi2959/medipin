@@ -53,6 +53,28 @@
       ]
     },
     {
+      "id": "src/pages/EditMyPage/Editmypage.jsx",
+      "label": "Editmypage",
+      "routes": [
+        "/edit-mypage"
+      ]
+    },
+    {
+      "id": "src/pages/AddFamily/AddFamily.jsx",
+      "label": "AddFamily",
+      "routes": [
+        "/add-family"
+      ]
+    },
+    {
+      "id": "src/pages/Calendar/Calendar.jsx",
+      "label": "Calendar",
+      "routes": [
+        "/pill-management",
+        "/calendar"
+      ]
+    },
+    {
       "id": "src/pages/Map_main/MapMain.jsx",
       "label": "MapMain",
       "routes": [
@@ -64,13 +86,6 @@
       "label": "MapRInfo",
       "routes": [
         "/map/detail/:name"
-      ]
-    },
-    {
-      "id": "src/pages/Calendar/Calendar.jsx",
-      "label": "Calendar",
-      "routes": [
-        "/calendar"
       ]
     },
     {
@@ -122,15 +137,15 @@
       }
     },
     {
-      "id": "src\\pages\\Register\\Register.jsx:102:6-to-src\\pages\\Login\\Login.jsx",
+      "id": "src\\pages\\Register\\Register.jsx:103:6-to-src\\pages\\Login\\Login.jsx",
       "source": "src\\pages\\Register\\Register.jsx",
       "target": "src\\pages\\Login\\Login.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 102,
-          "endLine": 102,
+          "line": 103,
+          "endLine": 103,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\Register\\Register.jsx"
@@ -138,17 +153,17 @@
       }
     },
     {
-      "id": "src\\pages\\Search_detail\\SearchDetail.jsx:50:53-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\pages\\Search_detail\\SearchDetail.jsx:93:39-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Search_main\\SearchMain.jsx",
+      "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
-        "viaRoute": "/search_main",
+        "viaRoute": "/calendar",
         "trigger": {
-          "element": "navigate(\"/search_main\")",
-          "line": 50,
-          "endLine": 50,
-          "column": 53,
-          "endColumn": 77,
+          "element": "navigate(\"/calendar\", { state: { addPillName: item.drug_name } })",
+          "line": 93,
+          "endLine": 93,
+          "column": 39,
+          "endColumn": 104,
           "sourceFile": "src\\pages\\Search_detail\\SearchDetail.jsx"
         }
       }
@@ -378,66 +393,18 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
-      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\pages\\EditMyPage\\Editmypage.jsx:23:16-to-src\\pages\\Login\\Login.jsx",
+      "source": "src\\pages\\EditMyPage\\Editmypage.jsx",
+      "target": "src\\pages\\Login\\Login.jsx",
       "data": {
-        "viaRoute": "/search_main",
+        "viaRoute": "/login",
         "trigger": {
-          "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
-          "column": 27,
-          "endColumn": 51,
-          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
-      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Map_main\\MapMain.jsx",
-      "data": {
-        "viaRoute": "/map",
-        "trigger": {
-          "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
-          "column": 27,
-          "endColumn": 43,
-          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
-      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Calendar\\Calendar.jsx",
-      "data": {
-        "viaRoute": "/calendar",
-        "trigger": {
-          "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
-          "column": 27,
-          "endColumn": 48,
-          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
-      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Chat\\ChattingMain.jsx",
-      "data": {
-        "viaRoute": "/chat",
-        "trigger": {
-          "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
-          "column": 23,
-          "endColumn": 40,
-          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+          "element": "navigate(\"/login\")",
+          "line": 23,
+          "endLine": 23,
+          "column": 16,
+          "endColumn": 34,
+          "sourceFile": "src\\pages\\EditMyPage\\Editmypage.jsx"
         }
       }
     },
@@ -570,15 +537,79 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:35:6-to-src\\pages\\Login\\Login.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Search_main\\SearchMain.jsx",
+      "data": {
+        "viaRoute": "/search_main",
+        "trigger": {
+          "element": "navigate(\"/search_main\")",
+          "line": 46,
+          "endLine": 46,
+          "column": 27,
+          "endColumn": 51,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Map_main\\MapMain.jsx",
+      "data": {
+        "viaRoute": "/map",
+        "trigger": {
+          "element": "navigate(\"/map\")",
+          "line": 55,
+          "endLine": 55,
+          "column": 27,
+          "endColumn": 43,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Calendar\\Calendar.jsx",
+      "data": {
+        "viaRoute": "/calendar",
+        "trigger": {
+          "element": "navigate(\"/calendar\")",
+          "line": 67,
+          "endLine": 67,
+          "column": 27,
+          "endColumn": 48,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Chat\\ChattingMain.jsx",
+      "data": {
+        "viaRoute": "/chat",
+        "trigger": {
+          "element": "navigate(\"/chat\")",
+          "line": 86,
+          "endLine": 86,
+          "column": 23,
+          "endColumn": 40,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:36:6-to-src\\pages\\Login\\Login.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Login\\Login.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 35,
-          "endLine": 35,
+          "line": 36,
+          "endLine": 36,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -586,15 +617,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:61:8-to-src\\pages\\Login\\Login.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:62:8-to-src\\pages\\Login\\Login.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Login\\Login.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 61,
-          "endLine": 61,
+          "line": 62,
+          "endLine": 62,
           "column": 8,
           "endColumn": 26,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -602,15 +633,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:149:56-to-src\\pages\\Search\\Search.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:151:56-to-src\\pages\\Search\\Search.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Search\\Search.jsx",
       "data": {
         "viaRoute": "/search",
         "trigger": {
           "element": "navigate(\"/search\")",
-          "line": 149,
-          "endLine": 149,
+          "line": 151,
+          "endLine": 151,
           "column": 56,
           "endColumn": 75,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -618,15 +649,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:155:53-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:157:53-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 155,
-          "endLine": 155,
+          "line": 157,
+          "endLine": 157,
           "column": 53,
           "endColumn": 69,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"

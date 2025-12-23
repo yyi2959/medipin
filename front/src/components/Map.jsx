@@ -1,5 +1,6 @@
 // src/components/Map.jsx
 import { useEffect, useRef } from "react";
+import { API_BASE_URL } from "../api/config";
 /* global kakao */
 
 export default function Map({
@@ -25,7 +26,7 @@ export default function Map({
     convenience: [],
   });
 
-  const API_URL = "http://127.0.0.1:8000/map";
+  const API_URL = `${API_BASE_URL}/map`;
 
   const waitForKakao = () =>
     new Promise((resolve, reject) => {
