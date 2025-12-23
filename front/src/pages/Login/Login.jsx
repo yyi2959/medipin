@@ -43,24 +43,9 @@ export const Login = () => {
     }
   };
 
-<<<<<<< HEAD
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       handleLogin();
-=======
-      // 로그인 성공: access + refresh 저장
-      setTokens({
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-      });
-      localStorage.setItem("userId", data.user_id);
-
-      navigate("/search_main");
-    } catch (err) {
-      // 서버 자체에 연결 불가(다운/주소 오류/네트워크 등)
-      console.error(err);
-      setWarningType("network-error"); // Warning 컴포넌트에 타입 추가 권장
->>>>>>> origin/ben
     }
   };
 
