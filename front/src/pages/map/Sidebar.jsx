@@ -57,34 +57,12 @@ export default function Sidebar({
         </button>
       </div>
 
-      {/* 도시 필터 */}
-      <label>도시 선택</label>
-      <select value={currentCity} onChange={(e) => onCityChange(e.target.value)}>
-        <option value="">현재 위치 기준</option>
-        {cities.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
-
       {/* 이름 검색 */}
       <label>이름 검색</label>
       <input
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="병원 또는 약국"
-      />
-
-      {/* 반경 설정 */}
-      <label>검색 반경: {(radius / 1000).toFixed(1)}km</label>
-      <input
-        type="range"
-        min="300"
-        max="3000"
-        step="100"
-        value={radius}
-        onChange={(e) => setRadius(Number(e.target.value))}
       />
 
       {/* 검색 결과 리스트 */}

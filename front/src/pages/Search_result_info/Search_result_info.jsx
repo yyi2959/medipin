@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../../api/config";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import preIcon from "./pre_icon.svg";
 import pillPic from "./pill_pic.svg";
+import AddScheduleModal from "../../components/AddScheduleModal/AddScheduleModal"; // ✅ Import
 import "./style.css";
 
 /* 헤더 컴포넌트 */
@@ -22,6 +23,7 @@ const SearchResultInfo = () => {
   const [drugDetail, setDrugDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // ✅ 모달 상태
 
   /* 드래그 관련 상태 */
   const [sheetHeight, setSheetHeight] = useState(80); // vh 단위, 초기값 80% (상세정보 보임)
@@ -187,7 +189,7 @@ const SearchResultInfo = () => {
             <h1 className="drug-name-kr">{drugDetail.item_name}</h1>
             <h3 className="drug-name-en">{drugDetail.item_eng_name || "Asidol soft cap."}</h3>
           </div>
-          <button className="add-btn" onClick={() => alert('추가 기능 구현 예정')}>
+          <button className="add-btn" onClick={() => setIsModalOpen(true)}>
             <span className="plus-icon">+</span>
           </button>
         </div>
@@ -212,6 +214,13 @@ const SearchResultInfo = () => {
         {/* 하단 여백 확보 */}
         <div style={{ height: "80px" }}></div>
       </div>
+
+      {/* ✅ 복약 일정 추가 모달 */}
+      <AddScheduleModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        defaultPillName={drugDetail ? drugDetail.item_name : ""}
+      />
 
       {/* 3. 하단 네비게이션 */}
       <div className="bottom-nav-container">

@@ -6,6 +6,7 @@ import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 
 import preIcon from "./pre_icon.svg";
+import AddScheduleModal from "../../components/AddScheduleModal/AddScheduleModal"; // ✅ Import Modal
 
 import "./style.css";
 
@@ -16,6 +17,8 @@ const SearchDetail = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]); // ✅ 검색 기록 상태
+  const [isModalOpen, setIsModalOpen] = useState(false); // ✅ 모달 상태
+  const [selectedPillName, setSelectedPillName] = useState(""); // ✅ 선택된 약 이름
 
   // 1. 초기 로드: 쿼리가 없으면 로컬 스토리지에서 기록 불러오기
   useEffect(() => {
@@ -90,7 +93,10 @@ const SearchDetail = () => {
                     key={item.id}
                     imageUrl={item.item_image}
                     title={item.drug_name}
-                    onPlusClick={() => navigate("/calendar", { state: { addPillName: item.drug_name } })}
+                    onPlusClick={() => {
+                      setSelectedPillName(item.drug_name);
+                      setIsModalOpen(true);
+                    }}
                     onImageClick={() => navigate(`/search/result/${item.id}`)}
                   />
                 ))}
@@ -98,6 +104,13 @@ const SearchDetail = () => {
             )}
           </>
         )}
+
+        {/* ✅ 복약 일정 추가 모달 */}
+        <AddScheduleModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          defaultPillName={selectedPillName}
+        />
 
         {/* Case B: 히스토리 모드 (쿼리 없음) */}
         {!query && (

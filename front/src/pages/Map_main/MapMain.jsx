@@ -4,7 +4,7 @@ import FilterIconGroup from "../../components/FilterIconGroup/FilterIconGroup";
 import MapList from "../../components/MapList/MapList";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
-import Sidebar from "../map/Sidebar"; // Sidebar Import
+
 import ambulanceIcon from "../../assets/ambulance.svg";
 
 import "./style.css";
@@ -45,8 +45,8 @@ export const MapMain = () => {
     favorites: false,
   });
 
-  // Sidebar States
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Sidebar States - REMOVED
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [radius, setRadius] = useState(1000);
   const [currentCity, setCurrentCity] = useState("");
   const geocoderRef = useRef(null);
@@ -369,39 +369,31 @@ export const MapMain = () => {
         </div>
       </div>
 
-      {isSidebarOpen && (
-        <div style={{ position: 'absolute', top: 0, left: 0, zIndex: 30, height: '100%', background: 'white', width: '280px', boxShadow: '2px 0 5px rgba(0,0,0,0.1)' }}>
-          <Sidebar
-            radius={radius}
-            setRadius={setRadius}
-            searchQuery={searchText}
-            setSearchQuery={setSearchText}
-            currentCity={currentCity}
-            onCityChange={handleCityChange}
-            filterType={Object.keys(filters).find(k => filters[k]) || "all"}
-            setFilterType={(type) => {
-              if (type === 'all') setFilters({ hospital: true, pharmacy: true, sos: true, constore: true, now: false, favorites: false });
-              else setFilters({ hospital: false, pharmacy: false, sos: false, constore: false, now: false, favorites: false, [type]: true });
-            }}
-            results={visiblePlaces}
-            onSelectResult={(place) => {
-              setSelectedPlace(place);
-              setSheetState(SHEET.MIN);
-              if (mapInstance.current) {
-                const loc = new window.kakao.maps.LatLng(place.lat, place.lng);
-                mapInstance.current.setCenter(loc);
-              }
-            }}
-          />
-        </div>
-      )}
+      {/* 내 위치 이동 버튼 */}
 
-      {/* 사이드바 토글 버튼 */}
+      {/* 내 위치 이동 버튼 */}
       <button
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        style={{ position: 'absolute', top: 110, left: 10, zIndex: 20, padding: '8px 12px', background: 'white', border: '1px solid #ddd', borderRadius: '4px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+        onClick={moveToMyLocation}
+        style={{
+          position: 'absolute',
+          bottom: '180px', // MapList 위쪽
+          right: '20px',
+          zIndex: 20,
+          width: '50px',
+          height: '50px',
+          borderRadius: '50%',
+          backgroundColor: 'white',
+          border: '1px solid #ddd',
+          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+          cursor: 'pointer',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontSize: '24px'
+        }}
+        title="내 위치로 이동"
       >
-        {isSidebarOpen ? "◀" : "⚙️ 설정"}
+        🎯
       </button>
 
       {/* 지도 */}
