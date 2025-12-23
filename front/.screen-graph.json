@@ -67,6 +67,13 @@
       ]
     },
     {
+      "id": "src/pages/EditFamily/EditFamily.jsx",
+      "label": "EditFamily",
+      "routes": [
+        "/edit-family"
+      ]
+    },
+    {
       "id": "src/pages/Calendar/Calendar.jsx",
       "label": "Calendar",
       "routes": [
@@ -149,22 +156,6 @@
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\Register\\Register.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\pages\\Search_detail\\SearchDetail.jsx:93:39-to-src\\pages\\Calendar\\Calendar.jsx",
-      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
-      "target": "src\\pages\\Calendar\\Calendar.jsx",
-      "data": {
-        "viaRoute": "/calendar",
-        "trigger": {
-          "element": "navigate(\"/calendar\", { state: { addPillName: item.drug_name } })",
-          "line": 93,
-          "endLine": 93,
-          "column": 39,
-          "endColumn": 104,
-          "sourceFile": "src\\pages\\Search_detail\\SearchDetail.jsx"
         }
       }
     },
