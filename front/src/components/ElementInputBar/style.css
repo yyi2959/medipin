@@ -1,7 +1,7 @@
 .element-input-bar {
   position: relative;
   width: 290px;
-  height: 30px;
+  height: 42px;
 
   background-color: #eee6ff;
   border-radius: 20px;
@@ -17,11 +17,13 @@
   background: transparent;
   outline: none;
 
-  padding: 8px 44px 0 46px;   /* 오른쪽 아이콘 공간 확보 */
-  line-height: 48px;        /* ⭐ 세로 중앙 정렬의 핵심 */
+  padding: 8px 44px 0 8px;
+  /* 오른쪽 아이콘 공간 확보 */
+  line-height: 48px;
+  /* ⭐ 세로 중앙 정렬의 핵심 */
 
   font-family: "Inter-Regular", Helvetica;
-  font-size: 14px;
+  font-size: 18px;
   color: #000;
 }
 
@@ -30,7 +32,8 @@
   position: absolute;
   right: 14px;
   top: 50%;
-  transform: translateY(-50%);  /* ⭐ 완전 중앙 */
+  transform: translateY(-50%);
+  /* ⭐ 완전 중앙 */
 
   width: 24px;
   height: 24px;

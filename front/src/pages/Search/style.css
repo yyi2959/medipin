@@ -85,20 +85,28 @@
 .search .text-wrapper-3 {
   align-self: stretch;
   color: #9f63ff;
-  font-family: "Inter", Helvetica, Arial, sans-serif;;
-  font-size: 25px;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  ;
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: 0;
   line-height: 35.0px;
-  margin-top: -1.00px;
+  /* margin-top: -1.00px; */
   position: relative;
-  margin-left: -10px;
+  margin-bottom: 16px;
 }
 
 .search .input-bar {
   flex: 0 0 auto !important;
   left: unset !important;
   top: unset !important;
+}
+
+.search .input-bar input {
+  padding-top: 26px;
+  /* 글씨를 아래로 내림 */
+  padding-bottom: 0px;
+  /* 전체 높이 균형 */
 }
 
 .search .frame-6 {
@@ -110,12 +118,14 @@
 }
 
 .search .history-row {
-  width: 290px;                 /* ✅ inputbar와 동일 */
+  width: 290px;
+  /* ✅ inputbar와 동일 */
   height: 20px;
 
   display: flex;
   align-items: center;
-  justify-content: space-between; /* ✅ 양 옆 배치 */
+  justify-content: space-between;
+  /* ✅ 양 옆 배치 */
 
   padding: 0 16px;
   box-sizing: border-box;
