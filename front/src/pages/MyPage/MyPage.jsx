@@ -104,7 +104,7 @@ export const MyPageScreen = () => {
               <div className="profile-name">{member.name}</div>
               <div className="profile-detail-row">
                 <span className="detail-label">Birthdate</span>
-                <span className="detail-value">{member.birthdate || "-"}</span>
+                <span className="detail-value">{member.birth_date || "-"}</span>
               </div>
               <div className="profile-detail-row">
                 <span className="detail-label">Age</span>
@@ -112,8 +112,8 @@ export const MyPageScreen = () => {
               </div>
             </div>
             <div className="card-right">
-              <button className="change-user-btn" onClick={() => alert(`Switched to ${member.name}`)}>
-                Change<br />User
+              <button className="change-user-btn" onClick={() => navigate("/edit-family", { state: member })}>
+                Edit<br />Info
               </button>
             </div>
           </div>

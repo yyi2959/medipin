@@ -19,6 +19,7 @@ import { SearchCamera } from "../pages/SearchCamera/SearchCamera";
 
 import EditMyPage from "../pages/EditMyPage/Editmypage";
 import AddFamily from "../pages/AddFamily/AddFamily";
+import EditFamily from "../pages/EditFamily/EditFamily"; // ✅ Import
 
 /* 마이페이지 */
 import { MyPageScreen } from "../pages/MyPage/MyPage"; // 🚨 추가
@@ -63,6 +64,7 @@ function AppRouter() {
         {/* 내 정보 수정 */}
         <Route path="/edit-mypage" element={<EditMyPage />} /> {/* 내 정보 수정 페이지 등록 */}
         <Route path="/add-family" element={<AddFamily />} /> {/* 가족 추가 페이지 */}
+        <Route path="/edit-family" element={<EditFamily />} /> {/* 가족 수정 페이지 */}
 
         {/* 복용 약 관리 -> 캘린더 페이지로 연결 */}
         <Route path="/pill-management" element={<Calendar />} />

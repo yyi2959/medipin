@@ -40,6 +40,7 @@ export const Login = () => {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
       });
+      localStorage.setItem("userId", data.user_id);
 
       navigate("/search_main");
     } catch (err) {

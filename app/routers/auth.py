@@ -62,7 +62,8 @@ def login(login_request: UserLoginRequest, db: Session = Depends(get_db)):
         "access_token": access_token, 
         "refresh_token": refresh_token_str, 
         "token_type": "bearer",
-        "user_name": user.name
+        "user_name": user.name,
+        "user_id": user.id
     }
     
 @auth_router.get("/me")

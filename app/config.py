@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     MYSQL_PORT: str
     MYSQL_DB: str
     REDIS_URL: str
+    GEMINI_API_KEY: str
     # DATABASE_URL: str  <-- Commented out to force usage of property below
 
     @property

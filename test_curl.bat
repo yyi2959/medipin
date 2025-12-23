@@ -1,0 +1,2 @@
+@echo off
+curl -X POST "http://localhost:8000/chatbot/" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiZW4xOTgzQG5hdmVyLmNvbSIsImV4cCI6MTc2NjQ1NjYyN30.HwkijuoZOFaZ5aaKcfu8H73v3jqkZ3zjx_esUimZzNk" -H "Content-Type: application/json" -d "{\"question\": \"타이레놀 정보 알려줘\"}"
