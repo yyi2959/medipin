@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 from typing import Optional, Dict, Any, List
 from datetime import date
 from app.config import settings
-
-# Model initialization moved to function scope
-
+import json
+import re
+import traceback
 
 # =======================================================
 # 1. 보조 함수: 사용자 요약 정보 조회
@@ -102,31 +102,71 @@ def fetch_rag_context(db: Session, user_id: int, query: str) -> str:
     return "\n\n".join(context_parts)
 
 # =======================================================
-# 4. 보조 함수: 복약 스케줄 등록
+# 3. 보조 함수: 복약 스케줄 등록 및 Active Medication 동기화
 # =======================================================
-def register_medication_schedule(db: Session, user_id: int, data: dict) -> str:
-    from app.models.medication import MedicationSchedule
-    
+def create_schedule(db: Session, user_id: int, data: dict, user_name: str) -> str:
+    from app.models.medication import MedicationSchedule, ActiveMedication
+    from app.models.user import PatientProfile
+
     try:
+        # 1. 데이터 파싱
+        pill_name = data.get('medication_name') or data.get('pill_name')
+        start_date = data.get('start_date')
+        notes = data.get('notes') or data.get('timing') 
+        dose = data.get('dose', '1회')
+        
+        print(f"[DEBUG] create_schedule: Pill={pill_name}, Date={start_date}, User={user_name}")
+
+        # 2. MedicationSchedule 등록
         new_schedule = MedicationSchedule(
             user_id=user_id,
-            pill_name=data.get('pill_name'),
-            start_date=data.get('start_date'),
-            timing=data.get('timing'),
-            dose=data.get('dose', '1회'), # Default dose
-            notify=True
+            pill_name=pill_name,
+            start_date=start_date,
+            end_date=start_date,
+            timing=notes,
+            memo=notes,
+            dose=dose,
+            notify=True,
+            is_taken=False
         )
         db.add(new_schedule)
+
+        # 3. ActiveMedication 동기화
+        patient = db.query(PatientProfile).filter(
+            PatientProfile.user_id == user_id, 
+            PatientProfile.relation == "Self"
+        ).first()
+
+        if patient:
+            # ActiveMedication에는 'status' 컬럼이 없으므로 notes 또는 별도 처리가 필요하지만
+            # 사용자 요청("상태도 '진행 중'으로")을 반영하여 notes에 기록함.
+            status_note = f"{notes} (상태: 진행 중)" if notes else "상태: 진행 중"
+            
+            new_active = ActiveMedication(
+                patient_id=patient.id,
+                medication_name=pill_name,
+                dosage=dose,
+                start_date=start_date,
+                end_date=start_date,
+                notes=status_note
+            )
+            db.add(new_active)
+            print(f"[DEBUG] ActiveMedication created for patient {patient.id} with status 'Progressing'")
+        
         db.commit()
         db.refresh(new_schedule)
-        return f"네, {data.get('start_date')} {data.get('timing', '')}에 '{data.get('pill_name')}' 복약 일정을 등록했습니다!"
+        
+        # 4. 사용자 피드백 생성
+        return f"{user_name}님, {start_date} {notes or ''} {pill_name} 일정을 캘린더에 저장했습니다!"
+
     except Exception as e:
-        print(f"Schedule Registration Error: {e}")
+        db.rollback()
+        print("!!! DB INSERT ERROR in create_schedule !!!")
+        traceback.print_exc()
         return "죄송합니다. 일정 등록 중 오류가 발생했습니다."
 
-
 # =======================================================
-# 3. 핵심 함수: 챗봇 응답 생성 (Gemini)
+# 4. 핵심 함수: 챗봇 응답 생성 (Gemini)
 # =======================================================
 def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
     # 1. 사용자 정보
@@ -147,27 +187,27 @@ def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
     사용자의 이름은 {name}이고, 나이는 {age}세입니다.
     특이사항(알러지 등): {note}
     
-    사용자의 질문에 대해 아래 제공된 [데이터 근거]를 바탕으로 답변해주세요.
-    데이터에 없는 내용은 일반적인 의학 지식이나 상식 선에서 정중하게 답변하되, 
-    "제공된 데이터에는 없지만..." 처럼 명시해주세요.
-    답변은 한국어로, 친근한 존댓말(해요체)를 사용해주세요.
-    
-    [데이터 근거]
-    {rag_data}
-    
-    [중요: 복약 일정 등록 요청 처리]
-    사용자가 "약 등록해줘", "먹을게", "알림 설정" 등 복약 일정을 등록하려는 의도를 보이면,
-    답변을 하는 대신 반드시 아래 **JSON 형식**으로만 응답해주세요. 다른 말은 덧붙이지 마세요.
+    사용자가 "약 등록해줘", "먹을게", "알림 설정" 등 복약 일정을 등록하려는 의도를 보이거나,
+    구체적인 약 이름과 시간을 언급하며 등록하라고 하면,
+    작업을 수행하기 위해 반드시 아래 **JSON 형식**으로만 응답해주세요. 
+    다른 말은 덧붙이지 마세요.
     날짜는 오늘({date.today()})을 기준으로 계산해서 YYYY-MM-DD 형식으로 변환하세요.
     
     JSON 형식:
     {{
       "intent": "REGISTER_SCHEDULE",
-      "pill_name": "약 이름 (추출 못하면 '약')",
-      "start_date": "YYYY-MM-DD",
-      "timing": "HH:MM (또는 아침/점심/저녁)",
-      "dose": "용량 (예: 1정, 추출 못하면 '1회분')"
+      "medication_name": "약 이름 (사용자가 말한 약 이름)",
+      "start_date": "YYYY-MM-DD (오늘 날짜 기준 계산)",
+      "notes": "시간 정보 (예: 오후 2시, 점심 식후 등)",
+      "dose": "용량 (예: 1정)"
     }}
+
+    [데이터 근거]
+    {rag_data}
+
+    데이터에 없는 내용은 일반적인 의학 지식이나 상식 선에서 정중하게 답변하되, 
+    "제공된 데이터에는 없지만..." 처럼 명시해주세요.
+    답변은 한국어로, 친근한 존댓말(해요체)를 사용해주세요.
     """
     
     user_prompt = f"사용자 질문: {question}"
@@ -177,33 +217,42 @@ def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
         api_key = settings.GEMINI_API_KEY
         if api_key:
             genai.configure(api_key=api_key)
+            
+            # 'gemini-1.5-flash' returned 404 (Not Found) for this API key.
+            # Switching to 'gemini-flash-latest' which was confirmed as available in the model list.
             model = genai.GenerativeModel('gemini-flash-latest')
         else:
              return "챗봇 엔진(Gemini)이 설정되지 않았습니다."
 
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
         response = model.generate_content(full_prompt)
+
         text_response = response.text.strip()
         
-        # JSON 응답 감지 및 처리 (Regex를 사용하여 Markdown Block 등 제거)
+        # JSON 응답 감지 및 처리
+        # Markdown code block 제거 ```json ... ```
         if "REGISTER_SCHEDULE" in text_response:
-            import json
-            import re
             try:
-                # { ... } 패턴 찾기 (DOTALL로 개행 포함)
+                # { ... } 패턴 찾기
                 match = re.search(r"\{.*\}", text_response, re.DOTALL)
                 if match:
                     json_str = match.group()
                     data = json.loads(json_str)
                     
                     if data.get("intent") == "REGISTER_SCHEDULE":
-                        return register_medication_schedule(db, user_id, data)
+                        return create_schedule(db, user_id, data, name)
             except Exception as e:
                 print(f"JSON Parsing Error: {e}")
+                # JSON 파싱 실패 시 텍스트 응답 그대로 반환하거나 에러 메시지
                 pass
 
         return text_response
         
     except Exception as e:
-        print(f"Gemini API Error: {e}")
-        return "죄송합니다. 답변을 생성하는 도중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+        error_msg = str(e)
+        print(f"Gemini API Error: {error_msg}")
+        
+        if "429" in error_msg or "Resource has been exhausted" in error_msg:
+            return "죄송합니다. 현재 AI 서비스 사용량이 많아 잠시 후 다시 시도해 주세요. (Quota Exceeded)"
+            
+        return "죄송합니다. 답변을 생성하는 도중 문제가 발생했습니다. (Error: " + error_msg[:50] + "...)"
