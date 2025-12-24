@@ -53,7 +53,7 @@ export const MyPageScreen = () => {
 
       try {
         // 1. Fetch Main Profile
-        const profileRes = await fetch("http://127.0.0.1:8000/user/profile", {
+        const profileRes = await fetch("http://localhost:8000/user/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (profileRes.ok) {
@@ -62,7 +62,7 @@ export const MyPageScreen = () => {
         }
 
         // 2. Fetch Family Members
-        const familyRes = await fetch("http://127.0.0.1:8000/user/family", {
+        const familyRes = await fetch("http://localhost:8000/user/family", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (familyRes.ok) {
