@@ -146,12 +146,13 @@ const SearchResultInfo = () => {
       {/* 1. 상단 이미지 영역 (Fixed Background) */}
       <div className="top-area-fixed">
         {/* 뒤로가기 & 타이틀 */}
+        {/* 뒤로가기 & 타이틀 */}
         <div className="page-header">
           <button className="back-btn" onClick={() => navigate(-1)}>
             <img src={preIcon} alt="Back" />
           </button>
           <div className="header-title-container" style={{ opacity: sheetHeight > 70 ? 0 : 1, transition: 'opacity 0.3s' }}>
-            <h2 className="header-title">{drugDetail.item_name}</h2>
+            <h2 className="header-title">{drugDetail.drug_name || drugDetail.item_name}</h2>
           </div>
         </div>
 
@@ -159,7 +160,7 @@ const SearchResultInfo = () => {
         <div className="image-container-fixed">
           <img
             src={drugDetail.item_image || pillPic}
-            alt={drugDetail.item_name}
+            alt={drugDetail.drug_name || drugDetail.item_name}
             onError={(e) => { e.target.src = pillPic; }}
             className="main-drug-img"
           />
@@ -186,8 +187,8 @@ const SearchResultInfo = () => {
         {/* 상단 타이틀 & 추가 버튼 */}
         <div className="sheet-header">
           <div className="titles">
-            <h1 className="drug-name-kr">{drugDetail.item_name}</h1>
-            <h3 className="drug-name-en">{drugDetail.item_eng_name || "Asidol soft cap."}</h3>
+            <h1 className="drug-name-kr">{drugDetail.drug_name || drugDetail.item_name}</h1>
+            <h3 className="drug-name-en">{drugDetail.item_eng_name || ""}</h3>
           </div>
           <button className="add-btn" onClick={() => setIsModalOpen(true)}>
             <span className="plus-icon">+</span>
@@ -196,7 +197,7 @@ const SearchResultInfo = () => {
 
         {/* 정보 리스트 */}
         <div className="info-list">
-          <InfoRow label="품목 일련번호" value={drugDetail.item_seq || "200808876"} />
+          <InfoRow label="품목 일련번호" value={drugDetail.item_seq || "-"} />
           <InfoRow label="전문/일반 구분" value={drugDetail.etc_otc_name} />
           <InfoRow label="체형 코드 이름" value={drugDetail.form_code_name} />
           <InfoRow label="의약품 모양" value={drugDetail.drug_shape} />
@@ -206,7 +207,7 @@ const SearchResultInfo = () => {
           <InfoRow label="크기(장축)" value={getLengthValue(drugDetail.leng_long)} />
           <InfoRow label="크기(단축)" value={getLengthValue(drugDetail.leng_short)} />
           <InfoRow label="업체명" value={drugDetail.company_name} />
-          <InfoRow label="업체 일련번호" value={drugDetail.entp_seq || "19540006"} />
+          <InfoRow label="업체 일련번호" value={drugDetail.entp_seq || "-"} />
           <InfoRow label="약의 용도" value={drugDetail.class_name} />
           <InfoRow label="분류 번호" value={drugDetail.class_no} />
         </div>

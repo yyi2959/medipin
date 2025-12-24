@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom"; // ✅ useLocation 추가
+import { useLocation, useNavigate } from "react-router-dom"; // ✅ useNavigate 추가
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO } from "date-fns";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
@@ -8,6 +8,7 @@ import preIcon from "../Search_detail/pre_icon.svg";
 import "./style.css";
 
 const Calendar = () => {
+    const navigate = useNavigate(); // ✅ navigate 훅 추가
     // 날짜 상태
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -20,7 +21,7 @@ const Calendar = () => {
     const [isAddMode, setIsAddMode] = useState(false);
 
     // 드래그 관련 상태 (List Sheet)
-    const [sheetHeight, setSheetHeight] = useState(50); // vh 단위
+    const [sheetHeight, setSheetHeight] = useState(0); // vh 단위 - 초기값 0으로 설정
     const listSheetRef = useRef(null);
     const dragStartY = useRef(0);
     const dragStartHeight = useRef(0);
@@ -104,15 +105,9 @@ const Calendar = () => {
             }, 100);
         }
 
-        // 초기 로딩 시 오늘 데이터에 맞춰 시트 높이 설정
-        if (schedules.length > 0) {
-            const todayStr = format(new Date(), 'yyyy-MM-dd');
-            const countToday = schedules.filter(s => s.start_date <= todayStr && s.end_date >= todayStr).length;
-            // [규격화] 2개 이하일 때는 30vh 고정, 3개부터는 비례 확장
-            const dynamicHeight = Math.min(85, Math.max(30, 8 + (countToday * 10)));
-            setSheetHeight(dynamicHeight);
-        }
-    }, [location.state, schedules.length]);
+        // 초기 로딩 시에는 시트를 숨김 (사용자가 날짜를 클릭할 때만 표시)
+        // 초기 로딩 시 오늘 데이터에 맞춰 시트 높이 설정 - 제거됨
+    }, [location.state]);
 
     const fetchSchedules = async () => {
         setLoading(true);
@@ -355,22 +350,65 @@ const Calendar = () => {
     });
 
     // --- 드래그 핸들러 (List) ---
+    const isDragging = useRef(false);
+
     const handleListTouchStart = (e) => {
+        isDragging.current = true;
         dragStartY.current = e.targetTouches[0].clientY;
         dragStartHeight.current = sheetHeight;
     };
 
     const handleListTouchMove = (e) => {
+        if (!isDragging.current) return;
         const currentY = e.targetTouches[0].clientY;
         const deltaY = currentY - dragStartY.current;
         const deltaVh = (deltaY / window.innerHeight) * 100;
         let newHeight = dragStartHeight.current - deltaVh;
 
-        // 제한 범위
-        if (newHeight < 30) newHeight = 30;
+        // 제한 범위 - 최소값 0으로 변경
+        if (newHeight < 0) newHeight = 0;
         if (newHeight > 85) newHeight = 85;
         setSheetHeight(newHeight);
     };
+
+    const handleListTouchEnd = () => {
+        isDragging.current = false;
+    };
+
+    // 마우스 이벤트 (데스크톱)
+    const handleListMouseDown = (e) => {
+        isDragging.current = true;
+        dragStartY.current = e.clientY;
+        dragStartHeight.current = sheetHeight;
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e) => {
+            if (!isDragging.current) return;
+            const currentY = e.clientY;
+            const deltaY = currentY - dragStartY.current;
+            const deltaVh = (deltaY / window.innerHeight) * 100;
+            let newHeight = dragStartHeight.current - deltaVh;
+
+            if (newHeight < 0) newHeight = 0;
+            if (newHeight > 85) newHeight = 85;
+            setSheetHeight(newHeight);
+        };
+
+        const handleMouseUp = () => {
+            isDragging.current = false;
+        };
+
+        if (isDragging.current) {
+            window.addEventListener("mousemove", handleMouseMove);
+            window.addEventListener("mouseup", handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [sheetHeight]);
 
     // --- 드래그 핸들러 (Add) ---
     const handleAddStart = (clientY) => {
@@ -460,48 +498,66 @@ const Calendar = () => {
         }, 300);
     };
 
+    /* Icons */
+    const BackIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+
     return (
         <div className="calendar-page">
-            <div
-                className="calendar-view"
-                onClick={() => {
-                    // 현재 선택된 날짜의 약 개수 확인
-                    const dayStr = format(selectedDate, 'yyyy-MM-dd');
-                    const countOnDay = schedules.filter(s => s.start_date <= dayStr && s.end_date >= dayStr).length;
+            {/* New Header */}
+            <div className="calendar-page-header">
+                <button onClick={() => navigate(-1)} className="calendar-back-btn">
+                    <BackIcon />
+                </button>
+                <div className="header-title">Calendar</div>
+                <div style={{ width: 24 }}></div>
+            </div>
 
-                    // 2개 이하: 바로 닫기 (sheetHeight = 0)
-                    // 3개 이상: 첫 클릭 시 25vh로 축소, 두 번째 클릭 시 닫기
-                    if (countOnDay <= 2) {
-                        // 2개 이하일 때는 1/4 단계 생략하고 바로 닫기
-                        if (sheetHeight > 0) setSheetHeight(0);
-                    } else {
-                        // 3개 이상일 때는 두 단계로 닫기
-                        if (sheetHeight > 25) {
-                            setSheetHeight(25); // 첫 클릭: 1/4로 축소
-                        } else if (sheetHeight > 0 && sheetHeight <= 25) {
-                            setSheetHeight(0); // 두 번째 클릭: 완전히 닫기
+            <div className="calendar-content-sheet">
+                <div
+                    className="calendar-view"
+                    onClick={() => {
+                        // 현재 선택된 날짜의 약 개수 확인
+                        const dayStr = format(selectedDate, 'yyyy-MM-dd');
+                        const countOnDay = schedules.filter(s => s.start_date <= dayStr && s.end_date >= dayStr).length;
+
+                        // 2개 이하: 바로 닫기 (sheetHeight = 0)
+                        // 3개 이상: 첫 클릭 시 25vh로 축소, 두 번째 클릭 시 닫기
+                        if (countOnDay <= 2) {
+                            // 2개 이하일 때는 1/4 단계 생략하고 바로 닫기
+                            if (sheetHeight > 0) setSheetHeight(0);
+                        } else {
+                            // 3개 이상일 때는 두 단계로 닫기
+                            if (sheetHeight > 25) {
+                                setSheetHeight(25); // 첫 클릭: 1/4로 축소
+                            } else if (sheetHeight > 0 && sheetHeight <= 25) {
+                                setSheetHeight(0); // 두 번째 클릭: 완전히 닫기
+                            }
                         }
-                    }
-                }}
-            >
-                <div className="calendar-header">
-                    <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(subMonths(currentMonth, 1)); }}>
-                        <img src={preIcon} alt="prev" style={{ transform: "rotate(0deg)" }} />
+                    }}
+                >
+                    <div className="calendar-header">
+                        <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(subMonths(currentMonth, 1)); }}>
+                            <img src={preIcon} alt="prev" style={{ transform: "rotate(0deg)" }} />
+                        </div>
+                        <div className="title">
+                            <span className="month">{format(currentMonth, "MMMM")}</span>
+                            <span className="year">{format(currentMonth, "yyyy")}</span>
+                        </div>
+                        <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(addMonths(currentMonth, 1)); }}>
+                            <img src={preIcon} alt="next" style={{ transform: "rotate(180deg)" }} />
+                        </div>
                     </div>
-                    <div className="title" onClick={(e) => e.stopPropagation()}>
-                        <span className="month">{format(currentMonth, "MMMM")}</span>
-                        <span className="year">{format(currentMonth, "yyyy")}</span>
-                    </div>
-                    <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(addMonths(currentMonth, 1)); }}>
-                        <img src={preIcon} alt="next" style={{ transform: "rotate(180deg)" }} />
-                    </div>
-                </div>
 
-                <div className="calendar-weekdays" onClick={(e) => e.stopPropagation()}>
-                    <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-                </div>
+                    <div className="calendar-weekdays">
+                        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                    </div>
 
-                {generateCalendar()}
+                    {generateCalendar()}
+                </div>
             </div>
 
             {/* --- 배경 어둡게 (Overlay) --- */}
@@ -536,6 +592,8 @@ const Calendar = () => {
                     className="sheet-handle-bar"
                     onTouchStart={handleListTouchStart}
                     onTouchMove={handleListTouchMove}
+                    onTouchEnd={handleListTouchEnd}
+                    onMouseDown={handleListMouseDown}
                 >
                     <div className="handle"></div>
                 </div>

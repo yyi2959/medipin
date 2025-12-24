@@ -1,11 +1,51 @@
 .calendar-page {
     width: 100%;
     height: 100vh;
-    /* Fixed height to prevent page scroll */
-    background-color: #fff;
+    background-color: #9F63FF;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: relative;
+}
+
+.calendar-page-header {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background-color: transparent;
+    color: white;
+    flex-shrink: 0;
+}
+
+.calendar-page-header .header-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+.calendar-page-header .calendar-back-btn {
+    background: #EEE6FF;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.calendar-content-sheet {
+    flex: 1;
+    background-color: #fff;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     position: relative;
 }
 
@@ -178,7 +218,8 @@
 
 .sheet-content {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: hidden;
+    /* 스크롤 제거 - 핸들바로만 컨트롤 */
     padding: 10px 24px 12px 24px;
     /* Minimized bottom padding to reclaim space */
 }

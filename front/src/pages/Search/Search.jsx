@@ -52,63 +52,78 @@ export const Search = () => {
     setHistory(updated);
   };
 
+  /* Icons */
+  const BackIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
   return (
     <div className="search">
-      <Element className="header" />
+      <div className="search-header">
+        <button onClick={() => navigate(-1)} className="search-back-btn">
+          <BackIcon />
+        </button>
+        <div className="search-header-title">Search</div>
+        <div style={{ width: 24 }}></div>
+      </div>
 
-      <div className="frame-2">
-        <div className="frame-wrapper">
-          <div className="frame-3">
-            <div className="div-wrapper">
-              <div className="frame-4">
-                <div className="frame-5">
-                  <div className="frame-4">
-                    <div className="text-wrapper-3">Search</div>
+      <div className="search-body">
+        <div className="frame-2">
+          <div className="frame-wrapper">
+            <div className="frame-3">
+              <div className="div-wrapper">
+                <div className="frame-4">
+                  <div className="frame-5">
+                    <div className="frame-4">
+                      <div className="text-wrapper-3">Search</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <ElementInputBar
-              className="input-bar"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) =>
-                e.key === "Enter" && handleSearch()
-              }
-              onSearch={handleSearch}
-            />
-          </div>
-        </div>
-
-        <div className="frame-6">
-          {history.length === 0 && (
-            <div className="frame-7">
-              <div className="text-wrapper-4">
-                최근 검색어가 없습니다
-              </div>
-            </div>
-          )}
-
-          {history.map((item, idx) => (
-            <div
-              key={idx}
-              className="history-row"
-              onClick={() =>
-                navigate(`/search/detail/${encodeURIComponent(item)}`)
-              }
-            >
-              <span className="history-text">{item}</span>
-
-              <img
-                src={trashIcon}
-                alt="delete"
-                className="trash-icon"
-                onClick={(e) => handleDelete(item, e)}
+              <ElementInputBar
+                className="input-bar"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleSearch()
+                }
+                onSearch={handleSearch}
               />
             </div>
-          ))}
+          </div>
 
+          <div className="frame-6">
+            {history.length === 0 && (
+              <div className="frame-7">
+                <div className="text-wrapper-4">
+                  최근 검색어가 없습니다
+                </div>
+              </div>
+            )}
+
+            {history.map((item, idx) => (
+              <div
+                key={idx}
+                className="history-row"
+                onClick={() =>
+                  navigate(`/search/detail/${encodeURIComponent(item)}`)
+                }
+              >
+                <span className="history-text">{item}</span>
+
+                <img
+                  src={trashIcon}
+                  alt="delete"
+                  className="trash-icon"
+                  onClick={(e) => handleDelete(item, e)}
+                />
+              </div>
+            ))}
+
+          </div>
         </div>
       </div>
     </div>

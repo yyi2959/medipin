@@ -7,7 +7,7 @@ const Welcome = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       window.location.href = "/login";   // 원하는 페이지로 이동
-    }, 7000); // ★ 1.5초 뒤 이동 (원하는 시간으로 변경 가능)
+    }, 5000); // ★ 1.5초 뒤 이동 (원하는 시간으로 변경 가능)
 
     return () => clearTimeout(timer);
   }, []);

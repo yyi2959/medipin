@@ -86,11 +86,20 @@ export const MyPageScreen = () => {
     </div>
   );
 
+  /* Icons */
+  const BackIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 18L9 12L15 6" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+
   return (
     <div className="my-page-container">
       {/* Header */}
       <div className="mypage-header">
-        <button onClick={() => navigate(-1)} className="back-btn">⬅</button>
+        <button onClick={() => navigate(-1)} className="mypage-back-btn">
+          <BackIcon />
+        </button>
         <div className="header-title">My page</div>
         <div style={{ width: 24 }}></div>
       </div>
