@@ -46,6 +46,14 @@
       ]
     },
     {
+      "id": "src/pages/Calendar/Calendar.jsx",
+      "label": "Calendar",
+      "routes": [
+        "/calendar",
+        "/pill-management"
+      ]
+    },
+    {
       "id": "src/pages/Search_main/SearchMain.jsx",
       "label": "SearchMain",
       "routes": [
@@ -71,14 +79,6 @@
       "label": "EditFamily",
       "routes": [
         "/edit-family"
-      ]
-    },
-    {
-      "id": "src/pages/Calendar/Calendar.jsx",
-      "label": "Calendar",
-      "routes": [
-        "/pill-management",
-        "/calendar"
       ]
     },
     {
@@ -352,54 +352,6 @@
       }
     },
     {
-      "id": "src\\pages\\Search_main\\SearchMain.jsx:22:27-to-src\\pages\\Search\\Search.jsx",
-      "source": "src\\pages\\Search_main\\SearchMain.jsx",
-      "target": "src\\pages\\Search\\Search.jsx",
-      "data": {
-        "viaRoute": "/search",
-        "trigger": {
-          "element": "navigate(\"/search\")",
-          "line": 22,
-          "endLine": 22,
-          "column": 27,
-          "endColumn": 46,
-          "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\pages\\Search_main\\SearchMain.jsx:32:27-to-src\\pages\\SearchCamera\\SearchCamera.jsx",
-      "source": "src\\pages\\Search_main\\SearchMain.jsx",
-      "target": "src\\pages\\SearchCamera\\SearchCamera.jsx",
-      "data": {
-        "viaRoute": "/search/camera",
-        "trigger": {
-          "element": "navigate(\"/search/camera\")",
-          "line": 32,
-          "endLine": 32,
-          "column": 27,
-          "endColumn": 53,
-          "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
-        }
-      }
-    },
-    {
-      "id": "src\\pages\\EditMyPage\\Editmypage.jsx:23:16-to-src\\pages\\Login\\Login.jsx",
-      "source": "src\\pages\\EditMyPage\\Editmypage.jsx",
-      "target": "src\\pages\\Login\\Login.jsx",
-      "data": {
-        "viaRoute": "/login",
-        "trigger": {
-          "element": "navigate(\"/login\")",
-          "line": 23,
-          "endLine": 23,
-          "column": 16,
-          "endColumn": 34,
-          "sourceFile": "src\\pages\\EditMyPage\\Editmypage.jsx"
-        }
-      }
-    },
-    {
       "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
@@ -460,6 +412,54 @@
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\Search_main\\SearchMain.jsx:22:27-to-src\\pages\\Search\\Search.jsx",
+      "source": "src\\pages\\Search_main\\SearchMain.jsx",
+      "target": "src\\pages\\Search\\Search.jsx",
+      "data": {
+        "viaRoute": "/search",
+        "trigger": {
+          "element": "navigate(\"/search\")",
+          "line": 22,
+          "endLine": 22,
+          "column": 27,
+          "endColumn": 46,
+          "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\Search_main\\SearchMain.jsx:32:27-to-src\\pages\\SearchCamera\\SearchCamera.jsx",
+      "source": "src\\pages\\Search_main\\SearchMain.jsx",
+      "target": "src\\pages\\SearchCamera\\SearchCamera.jsx",
+      "data": {
+        "viaRoute": "/search/camera",
+        "trigger": {
+          "element": "navigate(\"/search/camera\")",
+          "line": 32,
+          "endLine": 32,
+          "column": 27,
+          "endColumn": 53,
+          "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\EditMyPage\\Editmypage.jsx:23:16-to-src\\pages\\Login\\Login.jsx",
+      "source": "src\\pages\\EditMyPage\\Editmypage.jsx",
+      "target": "src\\pages\\Login\\Login.jsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate(\"/login\")",
+          "line": 23,
+          "endLine": 23,
+          "column": 16,
+          "endColumn": 34,
+          "sourceFile": "src\\pages\\EditMyPage\\Editmypage.jsx"
         }
       }
     },

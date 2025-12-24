@@ -8,6 +8,6 @@ export default defineConfig(({ mode }) => ({
   base: "./",
   server: {
     host: "0.0.0.0", // ⭐ 외부 기기 접속 허용
-    port: 5137,
+    port: 5173,
   },
 }));

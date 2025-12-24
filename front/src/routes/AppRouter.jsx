@@ -54,6 +54,10 @@ function AppRouter() {
 
         {/* 약 상세 정보 페이지 */}
         <Route path="/search/result/:drugId" element={<SearchResultInfo />} />
+
+        {/* 캘린더 (커스텀 하단바 제어를 위해 EmptyLayout으로 이동) */}
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/pill-management" element={<Calendar />} />
       </Route>
 
       {/* 2. HomeBar(하단바)가 있는 페이지들 */}
@@ -66,18 +70,12 @@ function AppRouter() {
         <Route path="/add-family" element={<AddFamily />} /> {/* 가족 추가 페이지 */}
         <Route path="/edit-family" element={<EditFamily />} /> {/* 가족 수정 페이지 */}
 
-        {/* 복용 약 관리 -> 캘린더 페이지로 연결 */}
-        <Route path="/pill-management" element={<Calendar />} />
-
         {/* 마이페이지 */}
         <Route path="/mypage" element={<MyPageScreen />} />
 
         {/* 지도 */}
         <Route path="/map" element={<MapMain />} />
         <Route path="/map/detail/:name" element={<MapRInfo />} />
-
-        {/* 캘린더 */}
-        <Route path="/calendar" element={<Calendar />} />
 
         {/* 챗봇 (하단바를 포함하는 디자인일 경우 여기에 배치) */}
         <Route path="/chat" element={<ChattingMain />} />

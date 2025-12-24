@@ -30,6 +30,7 @@ const Calendar = () => {
     const addSheetRef = useRef(null);
     const addDragStartY = useRef(0);
     const addDragStartHeight = useRef(0);
+    const isAddDragging = useRef(false);
 
     // 상세 시트 상태
     const [detailSheetOpen, setDetailSheetOpen] = useState(false);
@@ -44,11 +45,13 @@ const Calendar = () => {
         pill_name: "",
         dose: "",
         start_date: "",
-        start_time: "",
-        end_time: "",
+        end_date: "",
         timing: "",
         memo: "",
     });
+
+    const [users, setUsers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null);
 
     const API_URL = `${API_BASE_URL}/medication`;
     // const USER_ID = 1; 
@@ -58,22 +61,58 @@ const Calendar = () => {
     // --- 데이터 패칭 ---
     useEffect(() => {
         fetchSchedules();
+        fetchUsers();
     }, [currentMonth]);
+
+    const fetchUsers = async () => {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        try {
+            const [profileRes, familyRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/user/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                fetch(`${API_BASE_URL}/user/family`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            ]);
+
+            let allUsers = [];
+            if (profileRes.ok) {
+                const mainUser = await profileRes.json();
+                allUsers.push({ id: mainUser.id, name: mainUser.name + " (Me)" });
+                if (!selectedUserId) setSelectedUserId(mainUser.id);
+            }
+            if (familyRes.ok) {
+                const family = await familyRes.json();
+                allUsers = [...allUsers, ...family.map(f => ({ id: f.id, name: f.name }))];
+            }
+            setUsers(allUsers);
+        } catch (err) {
+            console.error("Failed to fetch users:", err);
+        }
+    };
 
     const location = useLocation(); // ✅ Hook 사용
 
     // 검색 페이지에서 넘어왔을 때 자동 실행
     useEffect(() => {
         if (location.state?.addPillName) {
-            // 시트 열면서 이름 전달
-            // setTimeout 없이도 동작하지만, 애니메이션/렌더링 순서 고려하여 약간 지연 가능
             setTimeout(() => {
                 openAddSheet({ pill_name: location.state.addPillName });
             }, 100);
-
-            // 상태 초기화 (새로고침 시 방지) - history replace로 state 제거 가능하지만 생략
         }
-    }, [location.state]);
+
+        // 초기 로딩 시 오늘 데이터에 맞춰 시트 높이 설정
+        if (schedules.length > 0) {
+            const todayStr = format(new Date(), 'yyyy-MM-dd');
+            const countToday = schedules.filter(s => s.start_date <= todayStr && s.end_date >= todayStr).length;
+            // [규격화] 2개 이하일 때는 30vh 고정, 3개부터는 비례 확장
+            const dynamicHeight = Math.min(85, Math.max(30, 8 + (countToday * 10)));
+            setSheetHeight(dynamicHeight);
+        }
+    }, [location.state, schedules.length]);
 
     const fetchSchedules = async () => {
         setLoading(true);
@@ -97,10 +136,19 @@ const Calendar = () => {
 
     // --- 이벤트 핸들러 ---
 
-    const handleDateClick = (day) => {
+    const handleDateClick = (e, day) => {
+        e.stopPropagation(); // 배경 클릭 이벤트 전파 방지
         setSelectedDate(day);
-        // "캘린더 부분 클릭하면 리스트가 내려가도록" -> 최소 높이로 축소
-        setSheetHeight(30);
+
+        // 날짜에 해당하는 일정 개수 확인
+        const dayStr = format(day, 'yyyy-MM-dd');
+        const countOnDay = schedules.filter(s => s.start_date <= dayStr && s.end_date >= dayStr).length;
+
+        // [규격화] 2개 이하일 때는 30vh 고정 (리스트1의 기본 크기)
+        // 3개부터는 약이 전부 보이도록 비례 확장 (최대 85vh)
+        const expandedHeight = Math.min(85, Math.max(30, 8 + (countOnDay * 10)));
+        setSheetHeight(expandedHeight);
+
         // 폼 초기화 (선택된 날짜로)
         setFormData(prev => ({
             ...prev,
@@ -134,13 +182,12 @@ const Calendar = () => {
         }
 
         const payload = {
-            user_id: USER_ID,
+            user_id: selectedUserId,
             pill_name: formData.pill_name,
             dose: formData.dose,
-            // date 필드 제거됨. start_date를 주 날짜로 사용
             start_date: formData.start_date || format(selectedDate, 'yyyy-MM-dd'),
-            end_date: formData.start_date || format(selectedDate, 'yyyy-MM-dd'),
-            timing: timingStr, // 시간 정보
+            end_date: formData.end_date || formData.start_date || format(selectedDate, 'yyyy-MM-dd'),
+            timing: formData.timing,
             meal_relation: null,
             memo: formData.memo,
             notify: true,
@@ -238,20 +285,8 @@ const Calendar = () => {
     const handleEditClick = () => {
         if (!selectedEvent) return;
         setEditId(selectedEvent.id);
-
-        // 폼 채우기
-        setFormData({
-            pill_name: selectedEvent.pill_name || "",
-            dose: selectedEvent.dose || "",
-            start_date: selectedEvent.start_date || "",
-            start_time: "", // 시간 파싱 복잡도 생략 (필요 시 timing 파싱)
-            end_time: "",
-            timing: selectedEvent.timing || "",
-            memo: selectedEvent.memo || "",
-        });
-
         closeDetailSheet();
-        openAddSheet(); // 수정 모드(editId 존재)로 열림
+        openAddSheet(selectedEvent); // 데이터를 직접 전달하여 비동기 이슈 방지
     };
 
     // --- 달력 렌더링 ---
@@ -275,18 +310,29 @@ const Calendar = () => {
                 const isCurrentMonth = isSameMonth(day, monthStart);
 
                 // 해당 날짜에 일정이 있는지 확인 (dot 표시용)
+                // 해당 날짜에 일정이 있는 유저들의 고유 ID 추출
                 const dayStr = format(day, 'yyyy-MM-dd');
-                const hasEvents = schedules.some(s => s.start_date === dayStr);
+                const daySchedules = schedules.filter(s => s.start_date === dayStr);
+                const userIdsOnDay = [...new Set(daySchedules.map(s => s.user_id))];
 
                 days.push(
                     <div
                         className={`col cell ${!isCurrentMonth ? "disabled" : ""} ${isSelected ? "selected" : ""}`}
                         key={day}
-                        onClick={() => handleDateClick(cloneDay)}
+                        onClick={(e) => handleDateClick(e, cloneDay)}
                     >
                         <span className="number">{formattedDate}</span>
-                        {/* 일정 있으면 dot 표시 */}
-                        {isCurrentMonth && hasEvents && <div className="dot"></div>}
+                        {/* 일정 있으면 유저별 색상 dot 표시 */}
+                        {isCurrentMonth && userIdsOnDay.length > 0 && (
+                            <div className="dot-container">
+                                {userIdsOnDay.map(uid => {
+                                    // 유저 리스트에서의 인덱스를 기반으로 색상 결정
+                                    const userIndex = users.findIndex(u => u.id === uid);
+                                    const colorClass = ["purple", "green", "blue"][userIndex % 3] || "purple";
+                                    return <div key={uid} className={`dot ${colorClass}`}></div>;
+                                })}
+                            </div>
+                        )}
                     </div>
                 );
                 day = new Date(day.getTime() + 86400000);
@@ -304,7 +350,8 @@ const Calendar = () => {
     // --- 선택된 날짜의 일정 필터링 ---
     const filteredSchedules = schedules.filter(s => {
         if (!s.start_date) return false;
-        return s.start_date === format(selectedDate, 'yyyy-MM-dd');
+        const dayStr = format(selectedDate, 'yyyy-MM-dd');
+        return s.start_date <= dayStr && s.end_date >= dayStr;
     });
 
     // --- 드래그 핸들러 (List) ---
@@ -326,13 +373,15 @@ const Calendar = () => {
     };
 
     // --- 드래그 핸들러 (Add) ---
-    const handleAddTouchStart = (e) => {
-        addDragStartY.current = e.targetTouches[0].clientY;
+    const handleAddStart = (clientY) => {
+        isAddDragging.current = true;
+        addDragStartY.current = clientY;
         addDragStartHeight.current = addSheetHeight;
     };
 
-    const handleAddTouchMove = (e) => {
-        const currentY = e.targetTouches[0].clientY;
+    const handleAddMove = (clientY) => {
+        if (!isAddDragging.current) return;
+        const currentY = clientY;
         const deltaY = currentY - addDragStartY.current;
         const deltaVh = (deltaY / window.innerHeight) * 100;
         let newHeight = addDragStartHeight.current - deltaVh;
@@ -342,7 +391,9 @@ const Calendar = () => {
         setAddSheetHeight(newHeight);
     };
 
-    const handleAddTouchEnd = () => {
+    const handleAddEnd = () => {
+        if (!isAddDragging.current) return;
+        isAddDragging.current = false;
         if (addSheetHeight < 40) {
             closeAddSheet();
         } else {
@@ -350,24 +401,51 @@ const Calendar = () => {
         }
     };
 
+    // Touch events for Add
+    const handleAddTouchStart = (e) => handleAddStart(e.targetTouches[0].clientY);
+    const handleAddTouchMove = (e) => handleAddMove(e.targetTouches[0].clientY);
+    const handleAddTouchEnd = () => handleAddEnd();
+
+    // Mouse events for Add (Desktop)
+    const handleAddMouseDown = (e) => handleAddStart(e.clientY);
+
+    useEffect(() => {
+        const handleMouseMove = (e) => handleAddMove(e.clientY);
+        const handleMouseUp = () => handleAddEnd();
+
+        if (isAddMode) {
+            window.addEventListener("mousemove", handleMouseMove);
+            window.addEventListener("mouseup", handleMouseUp);
+        }
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [isAddMode, addSheetHeight]);
+
     const openAddSheet = (initialData = null) => {
         setIsAddMode(true);
         setAddSheetHeight(85);
 
         if (initialData) {
             // 전달된 초기값이 있으면 설정 (기존 formData 유지하면서 병합)
-            setFormData(prev => ({
-                ...prev,
-                ...initialData
-            }));
+            setFormData({
+                pill_name: initialData.pill_name || "",
+                dose: initialData.dose || "",
+                start_date: initialData.start_date || format(selectedDate, 'yyyy-MM-dd'),
+                end_date: initialData.end_date || initialData.start_date || format(selectedDate, 'yyyy-MM-dd'),
+                timing: initialData.timing || "",
+                memo: initialData.memo || "",
+            });
+            // 유저 아이디도 동기화 (상세 시트에서 선택된 유저 정보가 있다면)
+            if (initialData.user_id) setSelectedUserId(initialData.user_id);
         } else if (!editId) {
-            // 수정 모드가 아닐 때만 초기화
+            // 수정 모드(신규 생성)일 때만 초기화
             setFormData({
                 pill_name: "",
                 dose: "",
                 start_date: format(selectedDate, 'yyyy-MM-dd'),
-                start_time: "",
-                end_time: "",
+                end_date: format(selectedDate, 'yyyy-MM-dd'),
                 timing: "",
                 memo: "",
             });
@@ -384,24 +462,54 @@ const Calendar = () => {
 
     return (
         <div className="calendar-page">
-            <div className="calendar-header">
-                <div className="icon" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-                    <img src={preIcon} alt="prev" style={{ transform: "rotate(0deg)" }} />
+            <div
+                className="calendar-view"
+                onClick={() => {
+                    // 배경 클릭 시 요청하신 대로 정확히 1/4 (25%) 높이로 최소화
+                    if (sheetHeight > 25) setSheetHeight(25);
+                }}
+            >
+                <div className="calendar-header">
+                    <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(subMonths(currentMonth, 1)); }}>
+                        <img src={preIcon} alt="prev" style={{ transform: "rotate(0deg)" }} />
+                    </div>
+                    <div className="title" onClick={(e) => e.stopPropagation()}>
+                        <span className="month">{format(currentMonth, "MMMM")}</span>
+                        <span className="year">{format(currentMonth, "yyyy")}</span>
+                    </div>
+                    <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(addMonths(currentMonth, 1)); }}>
+                        <img src={preIcon} alt="next" style={{ transform: "rotate(180deg)" }} />
+                    </div>
                 </div>
-                <div className="title">
-                    <span className="month">{format(currentMonth, "MMMM")}</span>
-                    <span className="year">{format(currentMonth, "yyyy")}</span>
+
+                <div className="calendar-weekdays" onClick={(e) => e.stopPropagation()}>
+                    <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
                 </div>
-                <div className="icon" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-                    <img src={preIcon} alt="next" style={{ transform: "rotate(180deg)" }} />
-                </div>
+
+                {generateCalendar()}
             </div>
 
-            <div className="calendar-weekdays">
-                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-            </div>
-
-            {generateCalendar()}
+            {/* --- 배경 어둡게 (Overlay) --- */}
+            {(isAddMode || detailSheetOpen) && (
+                <div
+                    className="sheet-overlay"
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100vh',
+                        background: 'rgba(0, 0, 0, 0.3)',
+                        zIndex: 1500,
+                        transition: 'opacity 0.3s ease'
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (isAddMode) closeAddSheet();
+                        else if (detailSheetOpen) setDetailSheetOpen(false);
+                    }}
+                />
+            )}
 
             {/* --- 스케줄 리스트 시트 --- */}
             <div
@@ -450,7 +558,11 @@ const Calendar = () => {
             {/* --- 복용약 추가 시트 --- */}
             <div
                 className={`add-pill-sheet`}
-                style={{ height: `${addSheetHeight}vh`, bottom: isAddMode ? 0 : '-100vh' }}
+                style={{
+                    height: `${addSheetHeight}vh`,
+                    bottom: isAddMode ? 0 : '-100vh',
+                    transition: isAddDragging.current ? 'none' : 'bottom 0.3s ease-out, height 0.3s ease-out'
+                }}
                 ref={addSheetRef}
             >
                 <div
@@ -458,12 +570,13 @@ const Calendar = () => {
                     onTouchStart={handleAddTouchStart}
                     onTouchMove={handleAddTouchMove}
                     onTouchEnd={handleAddTouchEnd}
+                    onMouseDown={handleAddMouseDown}
                 >
                     <div className="handle"></div>
                 </div>
 
                 <div className="sheet-header">
-                    <h3>{editId ? "Edit Pill" : "Add New Pill"}</h3>
+                    <h3>{editId ? "Edit Pill" : "Add new Pill"}</h3>
                 </div>
 
                 <div className="sheet-content-scroll">
@@ -475,20 +588,14 @@ const Calendar = () => {
                         <label>dose</label>
                         <input name="dose" value={formData.dose} onChange={handleFormChange} placeholder="dose" />
                     </div>
-                    <div className="form-group">
-                        <label>Date</label>
-                        <div className="input-with-icon">
-                            <input type="date" name="start_date" value={formData.start_date} onChange={handleFormChange} placeholder="YYYY-MM-DD" />
-                        </div>
-                    </div>
                     <div className="row-group">
                         <div className="form-group half">
-                            <label>Start time</label>
-                            <input name="start_time" value={formData.start_time} onChange={handleFormChange} placeholder="10:00" />
+                            <label>start date</label>
+                            <input type="date" name="start_date" value={formData.start_date} onChange={handleFormChange} />
                         </div>
                         <div className="form-group half">
-                            <label>End time</label>
-                            <input name="end_time" value={formData.end_time} onChange={handleFormChange} placeholder="12:00" />
+                            <label>end date</label>
+                            <input type="date" name="end_date" value={formData.end_date} onChange={handleFormChange} />
                         </div>
                     </div>
                     <div className="form-group">
@@ -503,7 +610,18 @@ const Calendar = () => {
                     <div className="form-group">
                         <label>Select User</label>
                         <div className="user-select">
-                            <div className="user-chip selected"><span className="dot"></span> User1</div>
+                            {users.map((u, index) => {
+                                const dotColorClass = ["purple", "green", "blue"][index % 3];
+                                return (
+                                    <div
+                                        key={u.id}
+                                        className={`user-chip ${selectedUserId === u.id ? 'selected' : ''}`}
+                                        onClick={() => setSelectedUserId(u.id)}
+                                    >
+                                        <span className={`dot ${dotColorClass}`}></span> {u.name}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -520,39 +638,46 @@ const Calendar = () => {
             <div
                 className="detail-sheet"
                 style={{
-                    position: 'fixed',
-                    bottom: detailSheetOpen ? 0 : '-50vh',
-                    left: 0,
-                    width: '100%',
-                    height: 'auto',
-                    minHeight: '200px',
-                    background: 'white',
-                    borderRadius: '20px 20px 0 0',
-                    boxShadow: '0 -4px 10px rgba(0,0,0,0.1)',
-                    transition: 'bottom 0.3s ease',
-                    zIndex: 2000,
-                    padding: '24px'
+                    bottom: detailSheetOpen ? 0 : '-100vh',
                 }}
             >
                 {selectedEvent && (
-                    <>
-                        <h3 style={{ margin: '0 0 16px', fontSize: '20px' }}>{selectedEvent.pill_name}</h3>
-                        <p style={{ color: '#666', marginBottom: '24px' }}>
-                            {selectedEvent.dose} / {selectedEvent.timing} <br />
-                            {selectedEvent.memo}
-                        </p>
+                    <div className="detail-content">
+                        <h3 className="detail-pill-name">{selectedEvent.pill_name}</h3>
 
-                        <div style={{ display: 'flex', gap: '12px' }}>
+                        <div className="detail-info-list">
+                            <div className="detail-info-item">
+                                <span className="label">Period</span>
+                                <span className="value">{selectedEvent.start_date} ~ {selectedEvent.end_date}</span>
+                            </div>
+
+                            {selectedEvent.timing && (
+                                <div className="detail-info-item">
+                                    <span className="label">Timing</span>
+                                    <span className="value">{selectedEvent.timing}</span>
+                                </div>
+                            )}
+
+                            {selectedEvent.memo && (
+                                <div className="detail-info-item memo">
+                                    <span className="label">Memo</span>
+                                    <span className="value">{selectedEvent.memo}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="action-buttons">
                             <button
                                 onClick={handleToggleTaken}
                                 style={{
-                                    flex: 2,
-                                    padding: '12px',
+                                    flex: 1, // Equal size
+                                    padding: '12px 4px', // Tighter padding for long text
                                     borderRadius: '12px',
                                     border: 'none',
                                     background: selectedEvent.is_taken ? '#eee' : '#9F63FF',
                                     color: selectedEvent.is_taken ? '#333' : 'white',
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    fontSize: '13px' // Slightly smaller to fit "Mark as Taken"
                                 }}
                             >
                                 {selectedEvent.is_taken ? "Undo Taken" : "Mark as Taken"}
@@ -560,12 +685,13 @@ const Calendar = () => {
                             <button
                                 onClick={handleEditClick}
                                 style={{
-                                    flex: 1,
+                                    flex: 1, // Equal size
                                     padding: '12px',
                                     borderRadius: '12px',
                                     border: '1px solid #ddd',
                                     background: 'white',
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    fontSize: '13px'
                                 }}
                             >
                                 Edit
@@ -573,28 +699,28 @@ const Calendar = () => {
                             <button
                                 onClick={handleDelete}
                                 style={{
-                                    flex: 0.8,
+                                    flex: 1, // Equal size
                                     padding: '12px',
                                     borderRadius: '12px',
                                     border: 'none',
                                     background: '#FFEBEE',
                                     color: '#D32F2F',
-                                    fontWeight: 'bold'
+                                    fontWeight: 'bold',
+                                    fontSize: '13px'
                                 }}
                             >
                                 Del
                             </button>
                         </div>
-                        <div style={{ marginTop: '20px', textAlign: 'center', color: '#999' }} onClick={closeDetailSheet}>
-                            Close
-                        </div>
-                    </>
+                    </div>
                 )}
             </div>
 
-            <div className="bottom-nav-container">
-                <HomeBar />
-            </div>
+            {!(sheetHeight > 5 || isAddMode || detailSheetOpen) && (
+                <div className="bottom-nav-container">
+                    <HomeBar />
+                </div>
+            )}
         </div >
     );
 };
