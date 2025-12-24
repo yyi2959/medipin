@@ -15,9 +15,10 @@
     width: 90%;
     max-width: 400px;
     background-color: white;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 30px;
+    /* Increased to 30px */
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -56,13 +57,16 @@
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 14px 16px;
+    border: none;
+    /* Removed border */
+    border-radius: 12px;
     font-size: 14px;
     box-sizing: border-box;
-    transition: border-color 0.2s;
-    /* Smooth transition */
+    transition: background-color 0.2s;
+    background-color: #F0EBFF;
+    /* Light lavender background */
+    color: #333;
 }
 
 .form-group input:focus,
@@ -84,11 +88,11 @@
 
 .submit-btn {
     width: 100%;
-    padding: 15px;
+    padding: 16px;
     background-color: #9F63FF;
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: 16px;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -98,6 +102,53 @@
 .submit-btn:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+/* --- Select User Styles --- */
+.user-select {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.user-chip {
+    padding: 8px 16px;
+    background: #F0EBFF;
+    border-radius: 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.user-chip.selected {
+    background: #c5a1ff;
+    color: white;
+}
+
+.user-chip .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.user-chip.selected .dot {
+    display: none;
+}
+
+.user-chip .dot.purple {
+    background-color: #9F63FF;
+}
+
+.user-chip .dot.green {
+    background-color: #00C48C;
+}
+
+.user-chip .dot.blue {
+    background-color: #5B4DFF;
 }
 
 @keyframes fadeIn {

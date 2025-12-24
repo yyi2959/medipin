@@ -15,18 +15,51 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
         memo: "",
     });
 
+    const [users, setUsers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [warningType, setWarningType] = useState(null); // Warning state
+    const [warningType, setWarningType] = useState(null);
 
     useEffect(() => {
-        console.log("AddScheduleModal useEffect - isOpen:", isOpen, "defaultPillName:", defaultPillName);
         if (isOpen) {
             setFormData(prev => ({
                 ...prev,
                 pill_name: defaultPillName || ""
             }));
+            fetchUsers();
         }
     }, [isOpen, defaultPillName]);
+
+    const fetchUsers = async () => {
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        try {
+            // Fetch main profile and family members
+            const [profileRes, familyRes] = await Promise.all([
+                fetch(`${API_BASE_URL}/user/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                fetch(`${API_BASE_URL}/user/family`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+            ]);
+
+            let allUsers = [];
+            if (profileRes.ok) {
+                const mainUser = await profileRes.json();
+                allUsers.push({ id: mainUser.id, name: mainUser.name + " (Me)" });
+                setSelectedUserId(mainUser.id);
+            }
+            if (familyRes.ok) {
+                const family = await familyRes.json();
+                allUsers = [...allUsers, ...family.map(f => ({ id: f.id, name: f.name }))];
+            }
+            setUsers(allUsers);
+        } catch (err) {
+            console.error("Failed to fetch users:", err);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -36,7 +69,7 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
     const handleWarningClose = () => {
         setWarningType(null);
         if (warningType === "medication-complete") {
-            onClose(); // Close modal on success warning close
+            onClose();
         }
     };
 
@@ -47,11 +80,8 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
         }
 
         setLoading(true);
-        const storedUserId = localStorage.getItem("userId");
-        const USER_ID = storedUserId ? parseInt(storedUserId) : 1;
-
         const payload = {
-            user_id: USER_ID,
+            user_id: selectedUserId,
             pill_name: formData.pill_name,
             dose: formData.dose,
             start_date: formData.start_date,
@@ -71,7 +101,6 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
             });
 
             if (res.ok) {
-                // Show custom warning instead of alert
                 setWarningType("medication-complete");
             } else {
                 const err = await res.json();
@@ -107,15 +136,13 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
                             <input name="dose" value={formData.dose} onChange={handleChange} placeholder="예: 1정" />
                         </div>
 
-                        <div className="row-group">
-                            <div className="form-group half">
-                                <label>start date</label>
-                                <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} />
-                            </div>
-                            <div className="form-group half">
-                                <label>end date</label>
-                                <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} />
-                            </div>
+                        <div className="form-group">
+                            <label>Start date</label>
+                            <input type="date" name="start_date" value={formData.start_date} onChange={handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>End date</label>
+                            <input type="date" name="end_date" value={formData.end_date} onChange={handleChange} />
                         </div>
 
                         <div className="form-group">
@@ -127,7 +154,27 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
                             <textarea name="memo" value={formData.memo} onChange={handleChange} rows={3} placeholder="메모 입력"></textarea>
                         </div>
 
-                        <Button one="register" onClick={handleSubmit} disabled={loading} />
+                        <div className="form-group">
+                            <label>Select User</label>
+                            <div className="user-select">
+                                {users.map((u, index) => {
+                                    const dotColorClass = ["purple", "green", "blue"][index % 3];
+                                    return (
+                                        <div
+                                            key={u.id}
+                                            className={`user-chip ${selectedUserId === u.id ? 'selected' : ''}`}
+                                            onClick={() => setSelectedUserId(u.id)}
+                                        >
+                                            <span className={`dot ${dotColorClass}`}></span> {u.name}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <button className="submit-btn" onClick={handleSubmit} disabled={loading}>
+                            {loading ? "Registering..." : "Register Pill"}
+                        </button>
                     </div>
                 </div>
             </div>

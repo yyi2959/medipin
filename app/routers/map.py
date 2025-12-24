@@ -221,3 +221,93 @@ def get_emergency_hospitals(
     except Exception as e:
         print(f"Error fetching emergency hospitals: {e}")
         return []
+
+@map_router.get("/search")
+def search_places(
+    keyword: str = Query(..., min_length=1),
+    db: Session = Depends(get_db)
+):
+    keyword_pattern = f"%{keyword}%"
+    results = []
+
+    # 1. Hospitals
+    try:
+        stmt_h = text("""
+            SELECT name, y as lat, x as lng, address, tel, homepage, 'hospital' as type
+            FROM master_medical
+            WHERE name LIKE :kw AND x IS NOT NULL AND y IS NOT NULL
+            LIMIT 50
+        """)
+        rows_h = db.execute(stmt_h, {"kw": keyword_pattern}).fetchall()
+        for r in rows_h:
+            results.append({
+                "name": r.name,
+                "lat": float(r.lat),
+                "lng": float(r.lng),
+                "address": r.address,
+                "tel": r.tel,
+                "homepage": r.homepage if hasattr(r, 'homepage') else "",
+                "type": "hospital"
+            })
+    except Exception as e:
+        print(f"Search Hospitals Error: {e}")
+
+    # 2. Pharmacies
+    try:
+        stmt_p = text("""
+            SELECT `약국명` as name, `y` as lat, `x` as lng, `주소` as address, `전화번호` as tel, 'pharmacy' as type
+            FROM pharmacy
+            WHERE `약국명` LIKE :kw AND x IS NOT NULL AND y IS NOT NULL
+            LIMIT 50
+        """)
+        rows_p = db.execute(stmt_p, {"kw": keyword_pattern}).fetchall()
+        for r in rows_p:
+            results.append({
+                "name": r.name,
+                "lat": float(r.lat),
+                "lng": float(r.lng),
+                "address": r.address,
+                "tel": r.tel,
+                "type": "pharmacy"
+            })
+    except Exception as e:
+        print(f"Search Pharmacies Error: {e}")
+
+    # 3. Convenience Stores (safe_pharmacy)
+    try:
+        stmt_c = text("""
+            SELECT name, x_coord, y_coord, address, tel, 'convenience' as type
+            FROM safe_pharmacy
+            WHERE name LIKE :kw AND x_coord IS NOT NULL AND y_coord IS NOT NULL
+            LIMIT 50
+        """)
+        rows_c = db.execute(stmt_c, {"kw": keyword_pattern}).fetchall()
+        for r in rows_c:
+            try:
+                # safe_pharmacy uses EPSG:5181, needs transform to WGS84
+                lng, lat = transformer.transform(float(r.x_coord), float(r.y_coord))
+                results.append({
+                    "name": r.name,
+                    "lat": lat,
+                    "lng": lng,
+                    "address": r.address,
+                    "tel": r.tel,
+                    "type": "convenience"
+                })
+            except:
+                continue
+    except Exception as e:
+        print(f"Search Convenience Error: {e}")
+
+    # Sort by relevance: Exact match > Starts with > Contains
+    def relevance_score(item):
+        name = item['name']
+        if name == keyword:
+            return 0
+        if name.startswith(keyword):
+            return 1
+        return 2
+
+    results.sort(key=relevance_score)
+
+    return results[:100]
