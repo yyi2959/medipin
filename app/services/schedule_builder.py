@@ -56,11 +56,37 @@ def build_schedule_from_normalized_data(
 def build_schedule_from_ocr(parsed_result: dict):
     """
     기존 OCR 파이프라인 호환용 래퍼 함수
+    🚨 calendar_builder.py와 호합을 위해 time 키를 포함한 평면 리스트 반환
     """
     from app.services.medication_normalizer import normalize_medications
 
     normalized = normalize_medications(parsed_result)
-    return build_schedule_from_normalized_data(normalized)
+    
+    flat_schedule = []
+    for med in normalized:
+        timings = med.get("timing", [])
+        
+        # 🚨 복용 시간대가 없을 경우 최소 하나라도 생성 (기본 09:00)
+        if not timings:
+            flat_schedule.append({
+                "drug_name": med.get("name"),
+                "label": med.get("name"),
+                "time": "09:00",
+                "dose": med.get("dose", "1정"),
+                "notify": True
+            })
+        else:
+            for t in timings:
+                time_val = BASE_TIMES.get(t, "09:00")
+                flat_schedule.append({
+                    "drug_name": med.get("name"),
+                    "label": f"{med.get('name')} ({t})",
+                    "time": time_val,
+                    "dose": med.get("dose", "1정"),
+                    "notify": True
+                })
+                
+    return flat_schedule
 
 
 def adjust_meal_time(hour, minute, relation):

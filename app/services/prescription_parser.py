@@ -5,7 +5,7 @@ def parse_prescription_text(text: str) -> dict:
         "hospital": None,
         "doctor": None,
         "date": None,
-        "medications": []
+        "medicines": []
     }
 
     # ✅ 병원명
@@ -43,6 +43,6 @@ def parse_prescription_text(text: str) -> dict:
             
             # 빈 데이터 방지
             if item:
-                result["medications"].append(item)
+                result["medicines"].append(item)
 
     return result

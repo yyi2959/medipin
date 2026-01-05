@@ -1,0 +1,6 @@
+﻿
+DATABASE_URL=mysql+pymysql
+://user1:123@127.0.0.1:330
+6/medipin
+
+

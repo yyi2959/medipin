@@ -96,6 +96,13 @@
       ]
     },
     {
+      "id": "src/pages/OCR/OcrResult.jsx",
+      "label": "OcrResult",
+      "routes": [
+        "/ocr/result"
+      ]
+    },
+    {
       "id": "src/pages/Chat/ChattingMain.jsx",
       "label": "ChattingMain",
       "routes": [
@@ -112,15 +119,15 @@
   ],
   "edges": [
     {
-      "id": "src\\pages\\Login\\Login.jsx:59:14-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\pages\\Login\\Login.jsx:62:14-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Login\\Login.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 59,
-          "endLine": 59,
+          "line": 62,
+          "endLine": 62,
           "column": 14,
           "endColumn": 38,
           "sourceFile": "src\\pages\\Login\\Login.jsx"
@@ -128,15 +135,15 @@
       }
     },
     {
-      "id": "src\\pages\\Login\\Login.jsx:99:54-to-src\\pages\\Register\\Register.jsx",
+      "id": "src\\pages\\Login\\Login.jsx:102:54-to-src\\pages\\Register\\Register.jsx",
       "source": "src\\pages\\Login\\Login.jsx",
       "target": "src\\pages\\Register\\Register.jsx",
       "data": {
         "viaRoute": "/register",
         "trigger": {
           "element": "navigate(\"/register\")",
-          "line": 99,
-          "endLine": 99,
+          "line": 102,
+          "endLine": 102,
           "column": 54,
           "endColumn": 75,
           "sourceFile": "src\\pages\\Login\\Login.jsx"
@@ -592,15 +599,63 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:36:6-to-src\\pages\\Login\\Login.jsx",
+      "id": "src\\pages\\OCR\\OcrResult.jsx:26:12-to-src\\pages\\Login\\Login.jsx",
+      "source": "src\\pages\\OCR\\OcrResult.jsx",
+      "target": "src\\pages\\Login\\Login.jsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate(\"/login\")",
+          "line": 26,
+          "endLine": 26,
+          "column": 12,
+          "endColumn": 30,
+          "sourceFile": "src\\pages\\OCR\\OcrResult.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\OCR\\OcrResult.jsx:79:12-to-src\\pages\\Login\\Login.jsx",
+      "source": "src\\pages\\OCR\\OcrResult.jsx",
+      "target": "src\\pages\\Login\\Login.jsx",
+      "data": {
+        "viaRoute": "/login",
+        "trigger": {
+          "element": "navigate(\"/login\")",
+          "line": 79,
+          "endLine": 79,
+          "column": 12,
+          "endColumn": 30,
+          "sourceFile": "src\\pages\\OCR\\OcrResult.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\OCR\\OcrResult.jsx:158:16-to-src\\pages\\Calendar\\Calendar.jsx",
+      "source": "src\\pages\\OCR\\OcrResult.jsx",
+      "target": "src\\pages\\Calendar\\Calendar.jsx",
+      "data": {
+        "viaRoute": "/calendar",
+        "trigger": {
+          "element": "navigate(\"/calendar\")",
+          "line": 158,
+          "endLine": 158,
+          "column": 16,
+          "endColumn": 37,
+          "sourceFile": "src\\pages\\OCR\\OcrResult.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:32:6-to-src\\pages\\Login\\Login.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Login\\Login.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 36,
-          "endLine": 36,
+          "line": 32,
+          "endLine": 32,
           "column": 6,
           "endColumn": 24,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -608,15 +663,15 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:62:8-to-src\\pages\\Login\\Login.jsx",
+      "id": "src\\pages\\Chat\\ChattingMain.jsx:58:8-to-src\\pages\\Login\\Login.jsx",
       "source": "src\\pages\\Chat\\ChattingMain.jsx",
       "target": "src\\pages\\Login\\Login.jsx",
       "data": {
         "viaRoute": "/login",
         "trigger": {
           "element": "navigate(\"/login\")",
-          "line": 62,
-          "endLine": 62,
+          "line": 58,
+          "endLine": 58,
           "column": 8,
           "endColumn": 26,
           "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
@@ -624,34 +679,82 @@
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:151:56-to-src\\pages\\Search\\Search.jsx",
-      "source": "src\\pages\\Chat\\ChattingMain.jsx",
-      "target": "src\\pages\\Search\\Search.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
-        "viaRoute": "/search",
+        "viaRoute": "/search_main",
         "trigger": {
-          "element": "navigate(\"/search\")",
-          "line": 151,
-          "endLine": 151,
-          "column": 56,
-          "endColumn": 75,
-          "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
+          "element": "navigate(\"/search_main\")",
+          "line": 46,
+          "endLine": 46,
+          "column": 27,
+          "endColumn": 51,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
         }
       }
     },
     {
-      "id": "src\\pages\\Chat\\ChattingMain.jsx:157:53-to-src\\pages\\Map_main\\MapMain.jsx",
-      "source": "src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 157,
-          "endLine": 157,
-          "column": 53,
-          "endColumn": 69,
-          "sourceFile": "src\\pages\\Chat\\ChattingMain.jsx"
+          "line": 55,
+          "endLine": 55,
+          "column": 27,
+          "endColumn": 43,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Calendar\\Calendar.jsx",
+      "data": {
+        "viaRoute": "/calendar",
+        "trigger": {
+          "element": "navigate(\"/calendar\")",
+          "line": 67,
+          "endLine": 67,
+          "column": 27,
+          "endColumn": 48,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
+      "target": "src\\pages\\Chat\\ChattingMain.jsx",
+      "data": {
+        "viaRoute": "/chat",
+        "trigger": {
+          "element": "navigate(\"/chat\")",
+          "line": 86,
+          "endLine": 86,
+          "column": 23,
+          "endColumn": 40,
+          "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
+        }
+      }
+    },
+    {
+      "id": "src\\pages\\SearchCamera\\SearchCamera.jsx:99:12-to-src\\pages\\OCR\\OcrResult.jsx",
+      "source": "src\\pages\\SearchCamera\\SearchCamera.jsx",
+      "target": "src\\pages\\OCR\\OcrResult.jsx",
+      "data": {
+        "viaRoute": "/ocr/result",
+        "trigger": {
+          "element": "navigate(\"/ocr/result\", { state: { ocrData: data.data } })",
+          "line": 99,
+          "endLine": 99,
+          "column": 12,
+          "endColumn": 70,
+          "sourceFile": "src\\pages\\SearchCamera\\SearchCamera.jsx"
         }
       }
     }

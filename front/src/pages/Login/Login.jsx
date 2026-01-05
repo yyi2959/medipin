@@ -31,14 +31,17 @@ export const Login = () => {
 
       if (res.ok) {
         localStorage.setItem("authToken", data.access_token);
+        if (data.user_id) localStorage.setItem("userId", data.user_id);
+        if (data.user_name) localStorage.setItem("userName", data.user_name);
         setWarningType("welcome");
       } else {
         // 🔴 비밀번호 불일치
         setWarningType("incorrect-password");
         return;
       }
-    } catch {
-      // 🔴 서버 오류도 로그인 실패로 처리
+    } catch (err) {
+      console.error("🔴 Login Network Error:", err);
+      alert(`로그인 중 네트워크 오류가 발생했습니다.\n주소: ${API_BASE_URL}\n상세: ${err.message}`);
       setWarningType("incorrect-password");
     }
   };

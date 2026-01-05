@@ -28,6 +28,9 @@ import { MyPageScreen } from "../pages/MyPage/MyPage"; // 🚨 추가
 import MapMain from "../pages/Map_main/MapMain";
 import MapRInfo from "../pages/MapRInfo/MapRInfo";
 
+/* OCR */
+import OcrResult from "../pages/OCR/OcrResult";
+
 /* 캘린더 */
 import Calendar from "../pages/Calendar/Calendar";
 
@@ -76,6 +79,9 @@ function AppRouter() {
         {/* 지도 */}
         <Route path="/map" element={<MapMain />} />
         <Route path="/map/detail/:name" element={<MapRInfo />} />
+
+        {/* OCR 결과 */}
+        <Route path="/ocr/result" element={<OcrResult />} />
 
         {/* 챗봇 (하단바를 포함하는 디자인일 경우 여기에 배치) */}
         <Route path="/chat" element={<ChattingMain />} />

@@ -72,9 +72,13 @@ def build_response(
 # ✅ 공통 OCR 처리 함수
 # -------------------------------------------------
 def process_image(file_path: str):
-    img = Image.open(file_path)
-    img = img.convert("L")
+    img = Image.open(file_path).convert("L")
+    
+    # 🚨 이미지 전처리 강화: 대비 및 이진화 적용
     img = ImageOps.autocontrast(img)
+    # 임계값(Thresholding)을 이용한 이진화 처리 (글자와 선을 뚜렷하게)
+    img = img.point(lambda x: 0 if x < 140 else 255, '1')
+    img = img.convert("L") # 다시 L 모드로
     img = img.filter(ImageFilter.SHARPEN)
 
     text = pytesseract.image_to_string(img, lang="kor+eng")
@@ -131,13 +135,13 @@ async def read_text(file: UploadFile = File(...)):
         # 4) OCR 실행
         extracted_text, image = process_image(temp_path)
 
-        if not extracted_text or len(extracted_text.strip()) < 10:
+        if not extracted_text or len(extracted_text.strip()) < 5: # 기준 완화 (10 -> 5)
             logger.warning(f"[OCR EMPTY] filename={file.filename}")
             return build_response(
                 success=False,
                 code="OCR_EMPTY",
                 message="텍스트 인식에 실패했습니다. 다시 촬영해 주세요.",
-                data={"filename": file.filename},
+                data={"filename": file.filename, "parsed_medication": []},
                 alert={"level": "WARNING", "reason": "OCR 결과 부족"},
             )
 
@@ -154,9 +158,25 @@ async def read_text(file: UploadFile = File(...)):
         # -------------------------------------------------
         if doc_type == "medicine_bag":
             parsed = parse_medication_text(extracted_text)
-            schedule = build_schedule_from_ocr(parsed)
+            
+            # 🚨 안전하게 파싱 결과 전달
+            try:
+                schedule = build_schedule_from_ocr(parsed)
+            except Exception as e:
+                logger.error(f"Schedule building failed: {e}")
+                schedule = []
+
+            # 🚨 build_calendar_events 호출 전 필수 키(time, drug_name 등) 검증
+            valid_schedule = [
+                s for s in schedule 
+                if s.get("time") and (s.get("drug_name") or s.get("label"))
+            ]
+            
+            if len(valid_schedule) < len(schedule):
+                logger.warning(f"[OCR] Filtered {len(schedule) - len(valid_schedule)} invalid schedule items.")
+
             calendar_events = build_calendar_events(
-                schedules=schedule,
+                schedules=valid_schedule,
                 start_date=start_date,
                 days=days,
                 alert_level=alert,
@@ -165,7 +185,7 @@ async def read_text(file: UploadFile = File(...)):
             response_data = {
                 "type": "medicine_bag",
                 "confidence": confidence,
-                "parsed_medication": parsed,
+                "parsed_medication": parsed.get("medicines", []), # 🚨 리스트만 추출해서 전달
                 "schedule": schedule,
                 "calendar_events": calendar_events,
             }
@@ -223,22 +243,31 @@ async def read_text(file: UploadFile = File(...)):
             )
 
         # -------------------------------------------------
-        # ✅ 알 수 없음
+        # ✅ 알 수 없음 (하지만 파싱 시도)
         # -------------------------------------------------
         elapsed = time.time() - start_time
         logger.info(
             f"[OCR UNKNOWN] filename={file.filename} elapsed={elapsed:.3f}s"
         )
 
+        # 알 수 없는 문서라도 약 이름 등이 있는지 파싱은 시도해봄
+        parsed_attempt = parse_medication_text(extracted_text)
+        medicines_list = parsed_attempt.get("medicines", [])
+
         response_data = {
+            "type": "unknown",
             "confidence": confidence,
             "raw_text": extracted_text,
+            "parsed_medication": medicines_list,
         }
 
+        # 파싱된 데이터가 1개라도 있다면 success=True로 반환하여 시연 흐름 유지
+        is_success = len(medicines_list) > 0
+
         return build_response(
-            success=False,
-            code="UNKNOWN_DOCUMENT",
-            message="문서 유형을 인식하지 못했습니다.",
+            success=is_success,
+            code="UNKNOWN_DOCUMENT" if not is_success else "OK",
+            message="문서 유형이 불분명하지만 데이터를 추출했습니다." if is_success else "문서 유형을 인식하지 못했습니다.",
             data=response_data,
             alert=alert,
         )

@@ -29,7 +29,16 @@ def build_calendar_events(
         current_date = start_date + timedelta(days=day_offset)
 
         for s in schedules:
-            hour, minute = map(int, s["time"].split(":"))
+            # 🚨 1. time 키가 없거나 값이 부적절할 경우를 대비한 예외 처리
+            raw_time = s.get("time") or "09:00"
+            if not isinstance(raw_time, str) or ":" not in raw_time:
+                raw_time = "09:00"
+
+            try:
+                hour, minute = map(int, raw_time.split(":"))
+            except (ValueError, AttributeError):
+                hour, minute = 9, 0
+                raw_time = "09:00"
 
             event_datetime = datetime(
                 year=current_date.year,
@@ -43,9 +52,9 @@ def build_calendar_events(
                 # ✅ 기존 필드
                 "datetime": event_datetime.isoformat(),
                 "date": current_date.isoformat(),
-                "time": s["time"],
-                "title": s["label"],
-                "notify": True,
+                "time": raw_time,
+                "title": s.get("label") or s.get("drug_name") or "약 복용",
+                "notify": s.get("notify", True),
 
                 # ✅ 핵심 추가
                 "alert_level": alert_level["level"],
