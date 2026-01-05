@@ -65,7 +65,6 @@ export const Search = () => {
         <button onClick={() => navigate(-1)} className="search-back-btn">
           <BackIcon />
         </button>
-        <div className="search-header-title">Search</div>
         <div style={{ width: 24 }}></div>
       </div>
 

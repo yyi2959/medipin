@@ -27,6 +27,10 @@ export const HomeBar = () => {
   const isCalendarActive =
     location.pathname.startsWith("/calendar");
 
+  /* 🔑 mypage 계열 경로 판별 */
+  const isMyPageActive =
+    location.pathname.startsWith("/mypage");
+
   return (
     <div className="homebar">
       {/* 배경 */}
@@ -71,7 +75,8 @@ export const HomeBar = () => {
           </div>
 
           <div
-            className="icon-item"
+            className={`icon-item ${isMyPageActive ? "active" : ""
+              }`}
             onClick={() => navigate("/mypage")}
           >
             <img src={mypageIcon} alt="mypage" />

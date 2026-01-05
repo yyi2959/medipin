@@ -13,7 +13,6 @@ const SearchMain = () => {
       <Element />
 
       <div className="search-ui">
-        <div className="search-title">Search</div>
 
         <div className="search-bar-row">
           {/* InputBar 클릭 → /search */}

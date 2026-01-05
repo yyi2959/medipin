@@ -151,7 +151,7 @@ const SearchResultInfo = () => {
           <button className="back-btn" onClick={() => navigate(-1)}>
             <img src={preIcon} alt="Back" />
           </button>
-          <div className="header-title-container" style={{ opacity: sheetHeight > 70 ? 0 : 1, transition: 'opacity 0.3s' }}>
+          <div className="header-title-container">
             <h2 className="header-title">{drugDetail.drug_name || drugDetail.item_name}</h2>
           </div>
         </div>
