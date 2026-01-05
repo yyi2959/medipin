@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useAlarm } from "../../context/AlarmContext";
+import AlarmOverlay from "../../components/AlarmOverlay/AlarmOverlay";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ useNavigate 추가
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO } from "date-fns";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
@@ -9,6 +11,7 @@ import "./style.css";
 
 const Calendar = () => {
     const navigate = useNavigate(); // ✅ navigate 훅 추가
+    const { toggleOverlay } = useAlarm();
     // 날짜 상태
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -507,13 +510,16 @@ const Calendar = () => {
 
     return (
         <div className="calendar-page">
+            <AlarmOverlay />
             {/* New Header */}
             <div className="calendar-page-header">
                 <button onClick={() => navigate(-1)} className="calendar-back-btn">
                     <BackIcon />
                 </button>
                 <div className="header-title">Calendar</div>
-                <div style={{ width: 24 }}></div>
+                <div className="icon-wrapper" onClick={toggleOverlay}>
+                    <div className="icon-alarm" />
+                </div>
             </div>
 
             <div className="calendar-content-sheet">

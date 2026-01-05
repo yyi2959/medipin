@@ -10,7 +10,8 @@
 
 /* 로그인 영역 */
 .login .frame-2 {
-  margin-top: 120px;            /* 🔥 헤더와 간격 */
+  margin-top: 120px;
+  /* 🔥 헤더와 간격 */
   width: 293px;
   display: flex;
   flex-direction: column;
@@ -28,7 +29,7 @@
 
 .login .text-wrapper-2 {
   color: #9f63ff;
-  font-family: "Noto Sans", Helvetica;
+  font-family: "Inter", Helvetica, sans-serif;
   font-size: 25px;
   font-weight: 800;
   margin-bottom: 6px;

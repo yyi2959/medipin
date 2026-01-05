@@ -9,6 +9,7 @@ const SearchOutline = () => <div style={{ width: 30, height: 30, backgroundColor
 const Pill = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc' }} />;
 
 import { useEffect, useState } from "react";
+import { useAlarm } from "../../context/AlarmContext";
 
 // Icons 
 const UserIcon = () => (
@@ -43,6 +44,7 @@ const ChevronRight = () => (
 
 export const MyPageScreen = () => {
   const navigate = useNavigate();
+  const { toggleOverlay } = useAlarm();
   const [user, setUser] = useState({ name: "MediPin User", email: "loading...", age: 0 });
   const [familyMembers, setFamilyMembers] = useState([]);
 
@@ -101,7 +103,9 @@ export const MyPageScreen = () => {
           <BackIcon />
         </button>
         <div className="header-title">My page</div>
-        <div style={{ width: 24 }}></div>
+        <div className="icon-wrapper" onClick={toggleOverlay}>
+          <div className="icon-alarm" />
+        </div>
       </div>
 
       <div className="content-scrollable">

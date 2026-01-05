@@ -9,7 +9,7 @@
 }
 
 .mypage-header {
-  height: 60px;
+  height: 100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,10 +31,30 @@
   border-radius: 50%;
 }
 
+/* 알림 아이콘 */
+.icon-wrapper {
+  width: 56px !important;
+  height: 56px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-alarm {
+  width: 36px !important;
+  height: 36px !important;
+  background-image: url("../../components/Element/alarm_icon.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
 .header-title {
   font-size: 18px;
   font-weight: bold;
-  color: white;
+  color: white !important;
+  line-height: normal;
+  /* 글씨 잘림 방지 */
 }
 
 .content-scrollable {
