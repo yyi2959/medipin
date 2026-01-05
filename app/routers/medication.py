@@ -80,22 +80,20 @@ def get_schedules(
         query = query.filter(MedicationSchedule.user_id == user_id)
     
     if year and month:
-        # Simple Filter: Extract month/year from 'date' column
-        # Note: This checks the specific `date` column. 
-        # If the user wants to check events overlapping date ranges (start_date ~ end_date), 
-        # logic would be different.
-        # Given the schema has `date` AND `start/end_date`, `date` likely means "The specific target date" 
-        # OR "Create Date"? 
-        # The prompt image says `date` has a value.
-        # Use simple date extraction filter compatible with common DBs
-        from sqlalchemy import extract
-        try:
-            query = query.filter(extract('year', MedicationSchedule.start_date) == year)
-            query = query.filter(extract('month', MedicationSchedule.start_date) == month)
-        except Exception as e:
-            # Fallback or log error if extraction fails (though schema fix should prevent this)
-            print(f"Date filter error: {e}")
-            raise e
+        # ✅ 해당 월의 시작일과 종료일 계산 (예: 2026-02-01 ~ 2026-02-28)
+        import calendar
+        from datetime import date as d_type
+        
+        last_day = calendar.monthrange(year, month)[1]
+        month_start = d_type(year, month, 1)
+        month_end = d_type(year, month, last_day)
+
+        # ✅ 기간 중첩(Overlap) 로직 적용
+        # (시작일 <= 월 종료일) AND (종료일 >= 월 시작일)
+        query = query.filter(
+            MedicationSchedule.start_date <= month_end,
+            MedicationSchedule.end_date >= month_start
+        )
 
     return query.all()
 

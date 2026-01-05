@@ -1,6 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 # Trigger reload 3
 from fastapi.middleware.cors import CORSMiddleware
+import logging
+
+logger = logging.getLogger("uvicorn.error")
 
 from app.db import Base, engine
 from app.routers.auth import auth_router
@@ -22,17 +27,7 @@ app = FastAPI(title="Medipin Backend")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:5137",
-        "http://127.0.0.1:5137",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
-    allow_origin_regex=r"^https://.*\.ngrok-free\.dev$",
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,3 +48,12 @@ Base.metadata.create_all(bind=engine)
 @app.get("/")
 def home():
     return {"status": "OK", "message": "Database Connected"}
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = exc.errors()
+    logger.error(f"422 Unprocessable Content: {errors}")
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": errors},
+    )

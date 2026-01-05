@@ -126,8 +126,7 @@ export const MapMain = () => {
             }, 300); // 300ms 디바운스
           };
 
-          kakao.maps.event.addListener(map, 'dragend', handleMapEvent);
-          kakao.maps.event.addListener(map, 'zoom_changed', handleMapEvent);
+          kakao.maps.event.addListener(map, 'bounds_changed', handleMapEvent);
 
           // ⭐ 지도 빈 곳 클릭 시 바텀시트 닫기 & 선택 해제
           kakao.maps.event.addListener(map, 'click', () => {
@@ -135,6 +134,7 @@ export const MapMain = () => {
             setSelectedPlace(null);
           });
 
+          // 초기 로딩: 내 위치 가져오기 시도 전 서울 기준 데이터 먼저 로드
           fetchMarkersInBounds();
           moveToMyLocation();
           updateRadiusCircle(); // 초기 반경 원 그리기
@@ -175,10 +175,19 @@ export const MapMain = () => {
     ];
 
     try {
-      const responses = await Promise.all(urls.map(u => fetch(u)));
-      const [hospitals, pharmacies, stores, emergencies] = await Promise.all(responses.map(r => r.json()));
+      console.log("Fetching map data with params:", params);
+      const responses = await Promise.all(urls.map(u => fetch(u).catch(err => {
+        console.error(`Fetch failed for ${u}:`, err);
+        return { ok: false };
+      })));
 
+      const data = await Promise.all(responses.map(r => {
+        if (r.ok) return r.json();
+        return [];
+      }));
 
+      const [hospitals, pharmacies, stores, emergencies] = data;
+      console.log(`Loaded: H(${hospitals.length}), P(${pharmacies.length}), S(${stores.length}), E(${emergencies.length})`);
 
       // 기존 마커 데이터 갱신
       clearMarkers(); // 기존 마커 객체 제거 (메모리 관리)
@@ -280,27 +289,43 @@ export const MapMain = () => {
 
   const moveToMyLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const loc = new window.kakao.maps.LatLng(lat, lng);
-        if (mapInstance.current) {
-          mapInstance.current.setCenter(loc);
-          mapInstance.current.setLevel(4);
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const loc = new window.kakao.maps.LatLng(lat, lng);
+          if (mapInstance.current) {
+            mapInstance.current.setCenter(loc);
+            mapInstance.current.setLevel(4);
 
-          // 내 위치 마커 표시
-          if (myLocationOverlayRef.current) {
-            myLocationOverlayRef.current.setMap(null);
+            // 내 위치 마커 표시
+            if (myLocationOverlayRef.current) {
+              myLocationOverlayRef.current.setMap(null);
+            }
+            const content = `<div class="my-location-dot"></div>`;
+            myLocationOverlayRef.current = new window.kakao.maps.CustomOverlay({
+              position: loc,
+              content: content,
+              zIndex: 1
+            });
+            myLocationOverlayRef.current.setMap(mapInstance.current);
+
+            // 위치 이동 후 해당 지역 데이터 로드
+            fetchMarkersInBounds();
           }
-          const content = `<div class="my-location-dot"></div>`;
-          myLocationOverlayRef.current = new window.kakao.maps.CustomOverlay({
-            position: loc,
-            content: content,
-            zIndex: 1
-          });
-          myLocationOverlayRef.current.setMap(mapInstance.current);
-        }
-      });
+        },
+        err => {
+          console.warn("Geolocation failed or denied:", err);
+          // 실패 시 이미 서울 기준으로 로드된 상태 유지
+          if (mapInstance.current) {
+            fetchMarkersInBounds();
+          }
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    } else {
+      console.warn("Geolocation not supported");
+      fetchMarkersInBounds();
     }
   };
 

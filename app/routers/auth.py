@@ -37,9 +37,9 @@ def login(login_request: UserLoginRequest, db: Session = Depends(get_db)):
     if not verify_password(login_request.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 올바르지 않습니다.")
     
-    # 3. 토큰 생성
-    access_token = create_access_token(data={"sub": user.email})
-    refresh_token_str = create_refresh_token(data={"sub": user.email})
+    # 3. 토큰 생성 (ID와 이름을 토큰에 포함하여 프론트엔드 편의성 제공)
+    access_token = create_access_token(data={"sub": user.email, "id": user.id, "name": user.name})
+    refresh_token_str = create_refresh_token(data={"sub": user.email, "id": user.id, "name": user.name})
     
     # 4. 리프레시 토큰 DB 저장 (기존 토큰 무효화 로직 등은 정책에 따라 추가 가능)
     # 여기서는 단순 추가

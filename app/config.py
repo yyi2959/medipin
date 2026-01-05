@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 import os
 
-# Get the directory where this file is located
+# 현재 파일 위치 기준으로 최상위 루트의 .env 경로 계산
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 env_path = os.path.join(BASE_DIR, ".env")
 
@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     MYSQL_DB: str
     REDIS_URL: str
     DATABASE_URL: str
+    
+    # 🚨 여기에 GEMINI_API_KEY를 추가해야 시스템이 .env의 키를 읽어옵니다.
+    GEMINI_API_KEY: str
 
     model_config = SettingsConfigDict(extra="ignore")
 

@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAlarm } from "../../context/AlarmContext";
-import AlarmOverlay from "../../components/AlarmOverlay/AlarmOverlay";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ useNavigate 추가
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO } from "date-fns";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
@@ -11,7 +9,7 @@ import "./style.css";
 
 const Calendar = () => {
     const navigate = useNavigate(); // ✅ navigate 훅 추가
-    const { toggleOverlay } = useAlarm();
+    const location = useLocation(); // ✅ Hook 선언 위치 교정 (최상단)
     // 날짜 상태
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -66,7 +64,7 @@ const Calendar = () => {
     useEffect(() => {
         fetchSchedules();
         fetchUsers();
-    }, [currentMonth]);
+    }, [currentMonth, location]); // location 추가 (네비게이션 시 리로드 보장)
 
     const fetchUsers = async () => {
         const token = localStorage.getItem("authToken");
@@ -98,19 +96,15 @@ const Calendar = () => {
         }
     };
 
-    const location = useLocation(); // ✅ Hook 사용
 
     // 검색 페이지에서 넘어왔을 때 자동 실행
     useEffect(() => {
-        if (location.state?.addPillName) {
+        if (location?.state?.addPillName) {
             setTimeout(() => {
                 openAddSheet({ pill_name: location.state.addPillName });
             }, 100);
         }
-
-        // 초기 로딩 시에는 시트를 숨김 (사용자가 날짜를 클릭할 때만 표시)
-        // 초기 로딩 시 오늘 데이터에 맞춰 시트 높이 설정 - 제거됨
-    }, [location.state]);
+    }, [location?.state]);
 
     const fetchSchedules = async () => {
         setLoading(true);
@@ -510,16 +504,13 @@ const Calendar = () => {
 
     return (
         <div className="calendar-page">
-            <AlarmOverlay />
             {/* New Header */}
             <div className="calendar-page-header">
                 <button onClick={() => navigate(-1)} className="calendar-back-btn">
                     <BackIcon />
                 </button>
                 <div className="header-title">Calendar</div>
-                <div className="icon-wrapper" onClick={toggleOverlay}>
-                    <div className="icon-alarm" />
-                </div>
+                <div style={{ width: 24 }}></div>
             </div>
 
             <div className="calendar-content-sheet">

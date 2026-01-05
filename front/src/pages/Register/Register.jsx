@@ -93,8 +93,8 @@ const Register = () => {
       // ✅ 성공일 때만 완료 Warning
       setWarningType("register-complete");
     } catch (err) {
-      console.error(err);
-      alert("네트워크 오류로 회원가입에 실패했습니다.");
+      console.error("🔴 Register Network Error:", err);
+      alert(`회원가입 중 네트워크 오류가 발생했습니다.\n주소: ${API_BASE_URL}\n상세: ${err.message}`);
     }
   };
 
