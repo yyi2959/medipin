@@ -76,7 +76,7 @@ export const Search = () => {
                 <div className="frame-4">
                   <div className="frame-5">
                     <div className="frame-4">
-                      <div className="text-wrapper-3">Search</div>
+                      {/* <div className="text-wrapper-3">Search</div> */}
                     </div>
                   </div>
                 </div>

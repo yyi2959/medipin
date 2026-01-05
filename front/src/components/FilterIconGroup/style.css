@@ -9,7 +9,8 @@
   width: 100%;
   padding: 10px 4px;
   /* ⭐ 그림자 잘림 방지용 여백 확보 */
-  gap: 12px;
+  gap: 8px !important;
+  justify-content: flex-start !important;
 
   overflow-x: auto;
   /* 가로 스크롤 */
@@ -35,12 +36,14 @@
   align-items: center;
   gap: 6px;
 
-  padding: 8px 14px;
+  padding: 6px 10px !important;
   border-radius: 100px;
   /* 둥근 칩 스타일 */
 
   cursor: pointer;
-  flex-shrink: 0;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: unset !important;
 
   background-color: #ffffff;
   /* 기본 흰색 배경 */
@@ -70,6 +73,8 @@
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
+  display: inline-block;
+  width: fit-content;
 }
 
 /* =========================

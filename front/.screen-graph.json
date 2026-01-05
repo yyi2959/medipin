@@ -160,15 +160,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -176,15 +176,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -192,15 +192,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -208,15 +208,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -224,15 +224,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -240,15 +240,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -256,15 +256,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -272,15 +272,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -288,15 +288,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -304,15 +304,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -320,15 +320,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -336,15 +336,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -352,15 +352,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -368,15 +368,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -384,15 +384,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -400,15 +400,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -416,15 +416,15 @@
       }
     },
     {
-      "id": "src\\pages\\Search_main\\SearchMain.jsx:22:27-to-src\\pages\\Search\\Search.jsx",
+      "id": "src\\pages\\Search_main\\SearchMain.jsx:21:27-to-src\\pages\\Search\\Search.jsx",
       "source": "src\\pages\\Search_main\\SearchMain.jsx",
       "target": "src\\pages\\Search\\Search.jsx",
       "data": {
         "viaRoute": "/search",
         "trigger": {
           "element": "navigate(\"/search\")",
-          "line": 22,
-          "endLine": 22,
+          "line": 21,
+          "endLine": 21,
           "column": 27,
           "endColumn": 46,
           "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
@@ -432,15 +432,15 @@
       }
     },
     {
-      "id": "src\\pages\\Search_main\\SearchMain.jsx:32:27-to-src\\pages\\SearchCamera\\SearchCamera.jsx",
+      "id": "src\\pages\\Search_main\\SearchMain.jsx:31:27-to-src\\pages\\SearchCamera\\SearchCamera.jsx",
       "source": "src\\pages\\Search_main\\SearchMain.jsx",
       "target": "src\\pages\\SearchCamera\\SearchCamera.jsx",
       "data": {
         "viaRoute": "/search/camera",
         "trigger": {
           "element": "navigate(\"/search/camera\")",
-          "line": 32,
-          "endLine": 32,
+          "line": 31,
+          "endLine": 31,
           "column": 27,
           "endColumn": 53,
           "sourceFile": "src\\pages\\Search_main\\SearchMain.jsx"
@@ -464,15 +464,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -480,15 +480,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -496,15 +496,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -512,15 +512,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -528,15 +528,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -544,15 +544,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -560,15 +560,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -576,15 +576,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -624,15 +624,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:46:27-to-src\\pages\\Search_main\\SearchMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:50:27-to-src\\pages\\Search_main\\SearchMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Search_main\\SearchMain.jsx",
       "data": {
         "viaRoute": "/search_main",
         "trigger": {
           "element": "navigate(\"/search_main\")",
-          "line": 46,
-          "endLine": 46,
+          "line": 50,
+          "endLine": 50,
           "column": 27,
           "endColumn": 51,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -640,15 +640,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:55:27-to-src\\pages\\Map_main\\MapMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:59:27-to-src\\pages\\Map_main\\MapMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Map_main\\MapMain.jsx",
       "data": {
         "viaRoute": "/map",
         "trigger": {
           "element": "navigate(\"/map\")",
-          "line": 55,
-          "endLine": 55,
+          "line": 59,
+          "endLine": 59,
           "column": 27,
           "endColumn": 43,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -656,15 +656,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:67:27-to-src\\pages\\Calendar\\Calendar.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:71:27-to-src\\pages\\Calendar\\Calendar.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Calendar\\Calendar.jsx",
       "data": {
         "viaRoute": "/calendar",
         "trigger": {
           "element": "navigate(\"/calendar\")",
-          "line": 67,
-          "endLine": 67,
+          "line": 71,
+          "endLine": 71,
           "column": 27,
           "endColumn": 48,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"
@@ -672,15 +672,15 @@
       }
     },
     {
-      "id": "src\\components\\HomeBar\\HomeBar.jsx:86:23-to-src\\pages\\Chat\\ChattingMain.jsx",
+      "id": "src\\components\\HomeBar\\HomeBar.jsx:91:23-to-src\\pages\\Chat\\ChattingMain.jsx",
       "source": "src\\pages\\Search_detail\\SearchDetail.jsx",
       "target": "src\\pages\\Chat\\ChattingMain.jsx",
       "data": {
         "viaRoute": "/chat",
         "trigger": {
           "element": "navigate(\"/chat\")",
-          "line": 86,
-          "endLine": 86,
+          "line": 91,
+          "endLine": 91,
           "column": 23,
           "endColumn": 40,
           "sourceFile": "src\\components\\HomeBar\\HomeBar.jsx"

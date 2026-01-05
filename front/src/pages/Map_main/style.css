@@ -16,9 +16,11 @@
 }
 
 .map-ui-inner {
-    width: 361px;
+    width: 95%;
+    max-width: 361px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 8px;
 }
 
@@ -27,6 +29,11 @@
     position: absolute;
     inset: 0;
     z-index: 1;
+}
+
+/* ⭐ 지도 마커 이미지 왜곡 방지 */
+.kakao-map-layer img {
+    object-fit: contain !important;
 }
 
 /* 하단 네비게이션 컨테이너 */

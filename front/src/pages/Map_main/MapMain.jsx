@@ -5,7 +5,10 @@ import MapList from "../../components/MapList/MapList";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 
-import ambulanceIcon from "../../assets/ambulance.svg";
+import hospitalIcon from "../../components/FilterIconGroup/Hospital_icon.svg";
+import pharmacyIcon from "../../components/FilterIconGroup/Pharmacy_icon.svg";
+import convIcon from "../../components/FilterIconGroup/Constore_icon.svg";
+import sosIcon from "../../components/FilterIconGroup/Sos_icon.svg";
 
 import "./style.css";
 
@@ -205,15 +208,15 @@ export const MapMain = () => {
     if (!window.kakao || !window.kakao.maps) return [];
 
     const imageMap = {
-      hospital: "https://postfiles.pstatic.net/MjAyNTEyMDlfODYg/MDAxNzY1MjU4NTgxMTE3.OR1zSpBxdcgRJ3VwdV_GHl9qojPdx9JQmyy2Bz-XQ8og.aSJDea3drP1B7zcwZc-V02F42kqp3XR9BR7liqI8h40g.PNG/hospital.png?type=w966",
-      pharmacy: "https://postfiles.pstatic.net/MjAyNTEyMDlfMjY1/MDAxNzY1MjU4ODI0ODI4._p_9MD5vjkfIGL_iIUBCSVHhx5JTAG9wqhRkxrmuei0g.Mo5O6ZABPabGYjuAScmOmCcab_BYlKUwcf-SjEnWVk0g.PNG/pill-removebg-preview.png?type=w966",
-      convenience: "https://postfiles.pstatic.net/MjAyNTEyMDlfMjUx/MDAxNzY1MjU4NTgxMTE3.Ruq6sQhusMsEEGY4E5bDbIDr5CdgsO3FM9urY0_iykwg.dm7HDIzMQOfLV3zzyl80gPdXdW54XNJWjDEVKuCg6_Qg.PNG/conveni.png?type=w966",
-      emergency: ambulanceIcon,
+      hospital: hospitalIcon,
+      pharmacy: pharmacyIcon,
+      convenience: convIcon,
+      emergency: sosIcon,
     };
 
     const markerImage = new window.kakao.maps.MarkerImage(
       imageMap[type],
-      new window.kakao.maps.Size(32, 32)
+      new window.kakao.maps.Size(24, 24)
     );
 
     return data.map((item) => {

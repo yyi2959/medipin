@@ -10,7 +10,7 @@ const SearchMain = () => {
 
   return (
     <div className="search-main">
-      <Element />
+      <Element variant="alarm" />
 
       <div className="search-ui">
 

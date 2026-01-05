@@ -1,4 +1,5 @@
 import React from "react";
+import { useAlarm } from "../../context/AlarmContext";
 // import { InputBar } from "../InputBar";
 import "./style.css";
 
@@ -10,13 +11,15 @@ import "./style.css";
  */
 
 export const Element = ({ variant = "simple", className = "" }) => {
+  const { toggleOverlay } = useAlarm();
+
   return (
     <div className={`element element--${variant} ${className}`}>
       <div className="header-top">
         <div className="logo">MediPIN</div>
 
         {(variant === "alarm" || variant === "search") && (
-          <div className="icon-wrapper">
+          <div className="icon-wrapper" onClick={toggleOverlay}>
             <div className="icon-alarm" />
           </div>
         )}

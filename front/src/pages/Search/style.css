@@ -4,7 +4,6 @@
   flex-direction: column;
   /* gap: 28px; Remove gap so header and body touch */
   min-height: 852px;
-  min-width: 393px;
   width: 100%;
 }
 
@@ -81,7 +80,8 @@
   margin-left: -9.50px;
   margin-right: -9.50px;
   position: relative;
-  width: 292px;
+  width: 100%;
+  max-width: 292px;
 }
 
 .search .div-wrapper {
@@ -153,7 +153,8 @@
 }
 
 .search .history-row {
-  width: 290px;
+  width: 100%;
+  max-width: 290px;
   /* ✅ inputbar와 동일 */
   height: 20px;
 
