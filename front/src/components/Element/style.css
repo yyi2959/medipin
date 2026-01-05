@@ -62,14 +62,16 @@
 
 /* 🔹 1. 로그인 헤더 (로고만) */
 .element--simple {
-  height: 100px;
+  height: 100px !important;
+  flex-shrink: 0;
   padding: 0;
   /* 내부 header-top에서 padding 처리 */
 }
 
 /* 🔹 2. 알림 헤더 (로고 + 알림) */
 .element--alarm {
-  height: 100px;
+  height: 100px !important;
+  flex-shrink: 0;
   padding: 0;
 }
 

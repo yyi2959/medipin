@@ -89,6 +89,10 @@
   box-shadow: 0 4px 8px rgba(159, 99, 255, 0.3);
 }
 
+.filter-item.active .label {
+  color: #ffffff !important;
+}
+
 .filter-item.active .icon {
   filter: brightness(0) invert(1);
   /* ⭐ 아이콘 흰색으로 변경 */

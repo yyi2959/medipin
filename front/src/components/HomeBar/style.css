@@ -83,7 +83,9 @@
   justify-content: center;
 
   cursor: pointer;
+  transition: all 0.2s ease;
 }
+
 
 .ai-center img {
   width: 26px;

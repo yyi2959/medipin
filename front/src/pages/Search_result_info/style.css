@@ -76,10 +76,10 @@
     /* 아이콘과의 간격 */
 }
 
-.header-title {
-    font-size: 8px;
+.search-detail-page .header-title {
+    font-size: 18px;
     font-weight: 800;
-    color: #000 !important;
+    color: #000000 !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

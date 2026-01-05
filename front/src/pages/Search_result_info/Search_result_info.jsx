@@ -152,7 +152,7 @@ const SearchResultInfo = () => {
             <img src={preIcon} alt="Back" />
           </button>
           <div className="header-title-container">
-            <h2 className="header-title">{drugDetail.drug_name || drugDetail.item_name}</h2>
+            <h2 className="header-title" style={{ color: "black" }}>{drugDetail.drug_name || drugDetail.item_name}</h2>
           </div>
         </div>
 
