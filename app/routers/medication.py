@@ -1,21 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import date as date_type, datetime
+from pydantic import BaseModel, field_validator
+from typing import Optional, List, Any
+from datetime import date as date_type, datetime, timedelta
 from app.db import get_db
 from app.models.medication import MedicationSchedule
 
 router = APIRouter(prefix="/medication", tags=["Medication"])
 
 # Request Schema
+# Updated Request Schema
 class ScheduleCreate(BaseModel):
     user_id: int
     pill_name: str
     dose: str
     start_date: Optional[date_type] = None
     end_date: Optional[date_type] = None
-    timing: Optional[str] = None
+    # 다중 타이밍 입력 (HH:MM 형식 리스트)
+    timings: List[str] = []
     meal_relation: Optional[str] = None
     memo: Optional[str] = None
     notify: bool = True
@@ -26,11 +28,12 @@ class ScheduleUpdate(BaseModel):
     dose: Optional[str] = None
     start_date: Optional[date_type] = None
     end_date: Optional[date_type] = None
-    timing: Optional[str] = None
     meal_relation: Optional[str] = None
     memo: Optional[str] = None
     notify: Optional[bool] = None
     is_taken: Optional[bool] = None
+    # 다중 타이밍 업데이트 지원 (선택 사항)
+    timings: Optional[List[str]] = None
 
 class ScheduleResponse(BaseModel):
     id: int
@@ -39,12 +42,28 @@ class ScheduleResponse(BaseModel):
     dose: Optional[str]
     start_date: Optional[date_type]
     end_date: Optional[date_type]
-    timing: Optional[str]
     meal_relation: Optional[str]
     memo: Optional[str]
     notify: Optional[bool]
     is_taken: Optional[bool]
     created_at: Optional[datetime]
+    # 응답에 타이밍 정보 포함
+    timing1: Optional[str] = None
+    timing2: Optional[str] = None
+    timing3: Optional[str] = None
+    timing4: Optional[str] = None
+    timing5: Optional[str] = None
+
+    @field_validator('timing1', 'timing2', 'timing3', 'timing4', 'timing5', mode='before')
+    @classmethod
+    def convert_timedelta_to_str(cls, v):
+        if isinstance(v, timedelta):
+            # 총 초를 HH:MM 포맷으로 변환
+            total_seconds = int(v.total_seconds())
+            hours = total_seconds // 3600
+            minutes = (total_seconds % 3600) // 60
+            return f"{hours:02d}:{minutes:02d}"
+        return v
 
     class Config:
         from_attributes = True
@@ -53,9 +72,12 @@ class ScheduleResponse(BaseModel):
 def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
     """
     복약 일정 생성 - 시작일부터 종료일까지 매일 개별 레코드 생성
+    + 다중 타이밍(timings 배열)을 timing1~5 컬럼에 매핑
+    + 알림(Alarm) 자동 등록
     """
-    from datetime import timedelta
-    
+    from datetime import timedelta, datetime
+    from app.models.alarm import Alarm
+
     # 날짜 검증
     if not schedule.start_date or not schedule.end_date:
         raise HTTPException(status_code=400, detail="start_date and end_date are required")
@@ -69,6 +91,9 @@ def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
     skipped_count = 0
     created_schedules = []
     
+    # 타이밍 매핑 준비 (최대 5개)
+    timings_map = {f"timing{i+1}": t for i, t in enumerate(schedule.timings[:5])}
+    
     while current_date <= schedule.end_date:
         # 중복 체크: 동일 사용자, 동일 약 이름, 동일 날짜
         existing = db.query(MedicationSchedule).filter(
@@ -80,22 +105,48 @@ def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
         if existing:
             skipped_count += 1
         else:
-            # 새 레코드 생성
+            # 새 레코드 생성 - timings_map 언패킹하여 timing1~5 설정
             db_schedule = MedicationSchedule(
                 user_id=schedule.user_id,
                 pill_name=schedule.pill_name,
                 dose=schedule.dose,
                 start_date=current_date,
                 end_date=current_date,  # 각 레코드는 하루 단위
-                timing=schedule.timing,
+                **timings_map,          # timing1='08:00', timing2='12:00'...
                 meal_relation=schedule.meal_relation,
                 memo=schedule.memo,
                 notify=schedule.notify,
                 is_taken=False
             )
             db.add(db_schedule)
+            db.flush() # ID 생성을 위해 flush
+            
             created_schedules.append(db_schedule)
             created_count += 1
+
+            # 🔔 알림 생성 로직
+            if schedule.notify and schedule.timings:
+                for t_str in schedule.timings:
+                    if not t_str: continue
+                    try:
+                        # HH:MM 형식 파싱
+                        hm = t_str.split(":")
+                        if len(hm) >= 2:
+                            hour, minute = int(hm[0]), int(hm[1])
+                            # 현재 날짜 + 시간 조합
+                            alarm_dt = datetime.combine(current_date, datetime.min.time())
+                            alarm_dt = alarm_dt.replace(hour=hour, minute=minute)
+                            
+                            new_alarm = Alarm(
+                                user_id=schedule.user_id,
+                                schedule_id=db_schedule.id,
+                                alarm_time=alarm_dt,
+                                message=f"{schedule.pill_name} 복약 시간입니다."
+                            )
+                            db.add(new_alarm)
+                    except Exception as e:
+                        print(f"Error creating alarm for {t_str}: {e}")
+
         
         current_date += timedelta(days=1)
     
@@ -116,12 +167,16 @@ def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
             "dose": response.dose,
             "start_date": response.start_date,
             "end_date": response.end_date,
-            "timing": response.timing,
             "meal_relation": response.meal_relation,
             "memo": response.memo,
             "notify": response.notify,
             "is_taken": response.is_taken,
             "created_at": response.created_at,
+            "timing1": response.timing1,
+            "timing2": response.timing2,
+            "timing3": response.timing3,
+            "timing4": response.timing4,
+            "timing5": response.timing5,
             "message": f"총 {created_count}일간의 복약 일정이 등록되었습니다. (중복 제외: {skipped_count}건)"
         }
         return response_dict

@@ -62,8 +62,9 @@ const ChattingMain = () => {
       const data = await response.json();
       console.log("Chatbot Response:", data);
 
-      if (data && data.response) {
-        const botMessage = { text: data.response, sender: "bot" };
+      const botReply = data.response || data.answer;
+      if (botReply) {
+        const botMessage = { text: botReply, sender: "bot" };
         setMessages((prev) => [...prev, botMessage]);
       }
     } catch (error) {

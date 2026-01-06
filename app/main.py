@@ -15,6 +15,7 @@ from app.routers.ocr import ocr_router
 from app.routers.map import map_router
 from app.routers.medication import router as medication_router
 from app.routers.chatbot import chatbot_router
+from app.routers.alarm import router as alarm_router
 
 # 🚨 Ensure all models are imported for Base.metadata.create_all
 import app.models.user
@@ -42,6 +43,7 @@ app.include_router(ocr_router)
 app.include_router(map_router)
 app.include_router(chatbot_router)
 app.include_router(medication_router)
+app.include_router(alarm_router)
 
 Base.metadata.create_all(bind=engine)
 

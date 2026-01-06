@@ -28,7 +28,14 @@ class MedicationSchedule(Base):
     dose = Column(String(50), nullable=True)
     start_date = Column(Date, nullable=True)
     end_date = Column(Date, nullable=True)
-    timing = Column(String(50), nullable=True)
+    
+    # 다중 복약 시간 (00:00 형식 문자열 권장)
+    timing1 = Column(String(50), nullable=True)
+    timing2 = Column(String(50), nullable=True)
+    timing3 = Column(String(50), nullable=True)
+    timing4 = Column(String(50), nullable=True)
+    timing5 = Column(String(50), nullable=True)
+    
     meal_relation = Column(String(100), nullable=True)
     memo = Column(Text, nullable=True)
     notify = Column(Boolean, server_default="1")

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ useNavigate 추가
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO } from "date-fns";
+import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO, parse } from "date-fns";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 /* 아이콘들 */
@@ -13,6 +13,21 @@ const Calendar = () => {
     // 날짜 상태
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
+
+    // URL 쿼리 파라미터로 전달된 날짜가 있으면 해당 날짜로 이동
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const dateParam = params.get('date');
+        if (dateParam) {
+            // YYYY-MM-DD 파싱
+            const targetDate = parse(dateParam, 'yyyy-MM-dd', new Date());
+            // 유효한 날짜인 경우에만 설정
+            if (!isNaN(targetDate)) {
+                setSelectedDate(targetDate);
+                setCurrentMonth(targetDate);
+            }
+        }
+    }, [location.search]);
 
     // 데이터 상태
     const [schedules, setSchedules] = useState([]);
@@ -54,6 +69,9 @@ const Calendar = () => {
 
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState(null);
+
+    // ⏰ 다중 복약 시간 상태 (기본 1개 행)
+    const [timings, setTimings] = useState([{ hour: '', minute: '', text: '' }]);
 
     const API_URL = `${API_BASE_URL}/medication`;
     // const USER_ID = 1; 
@@ -183,13 +201,19 @@ const Calendar = () => {
             timingStr = formData.start_time;
         }
 
+        // ⏰ timings 배열 구성 (빈 값 제외)
+        const validTimings = timings
+            .filter(t => t.hour && t.minute)
+            .map(t => `${t.hour}:${t.minute}`); // HH:MM 형식
+
         const payload = {
             user_id: selectedUserId,
             pill_name: formData.pill_name,
             dose: formData.dose,
             start_date: formData.start_date || format(selectedDate, 'yyyy-MM-dd'),
             end_date: formData.end_date || formData.start_date || format(selectedDate, 'yyyy-MM-dd'),
-            timing: formData.timing,
+            timing: validTimings.length > 0 ? validTimings[0] : formData.timing, // 호환성용 첫 번째 시간
+            timings: validTimings, // 백엔드로 보낼 다중 시간 배열
             meal_relation: null,
             memo: formData.memo,
             notify: true,
@@ -482,8 +506,25 @@ const Calendar = () => {
                 timing: initialData.timing || "",
                 memo: initialData.memo || "",
             });
-            // 유저 아이디도 동기화 (상세 시트에서 선택된 유저 정보가 있다면)
+            // 유저 아이디도 동기화
             if (initialData.user_id) setSelectedUserId(initialData.user_id);
+
+            // ⏰ 기존 timing1~timing5 데이터 로드
+            const loadedTimings = [];
+            for (let i = 1; i <= 5; i++) {
+                const val = initialData[`timing${i}`];
+                if (val) {
+                    const [h, m] = val.split(':');
+                    loadedTimings.push({ hour: h, minute: m, text: '' }); // text는 DB에 없으므로 생략
+                }
+            }
+            // 데이터가 없으면 기본값, 있으면 상태 업데이트 (최소 1개 빈 행 추가? 아니면 있는 것만?)
+            // 있는 것 + 마지막이 5개 미만이면 빈 행 추가
+            if (loadedTimings.length === 0) loadedTimings.push({ hour: '', minute: '', text: '' });
+            else if (loadedTimings.length < 5) loadedTimings.push({ hour: '', minute: '', text: '' });
+
+            setTimings(loadedTimings);
+
         } else if (!editId) {
             // 수정 모드(신규 생성)일 때만 초기화
             setFormData({
@@ -494,6 +535,7 @@ const Calendar = () => {
                 timing: "",
                 memo: "",
             });
+            setTimings([{ hour: '', minute: '', text: '' }]);
         }
     };
 
@@ -676,8 +718,65 @@ const Calendar = () => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <label>timing</label>
-                        <input name="timing" value={formData.timing} onChange={handleFormChange} placeholder="timing (e.g. After meal)" />
+                        <label>Timing (Max 5)</label>
+                        <div className="timing-list">
+                            {timings.map((t, idx) => (
+                                <div key={idx} className="timing-row" style={{ display: 'flex', gap: '5px', marginBottom: '5px' }}>
+                                    <select
+                                        className="timing-select"
+                                        value={t.hour}
+                                        onChange={(e) => {
+                                            const newTimings = [...timings];
+                                            newTimings[idx].hour = e.target.value;
+                                            // Auto-add next row if this is the last row and we are editing it
+                                            if (idx === timings.length - 1 && timings.length < 5 && e.target.value && newTimings[idx].minute) {
+                                                newTimings.push({ hour: '', minute: '', text: '' });
+                                            }
+                                            setTimings(newTimings);
+                                        }}
+                                        style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    >
+                                        <option value="">Hour</option>
+                                        {[...Array(24)].map((_, i) => {
+                                            const val = i.toString().padStart(2, '0');
+                                            return <option key={val} value={val}>{val}</option>;
+                                        })}
+                                    </select>
+                                    <span style={{ alignSelf: 'center' }}>:</span>
+                                    <select
+                                        className="timing-select"
+                                        value={t.minute}
+                                        onChange={(e) => {
+                                            const newTimings = [...timings];
+                                            newTimings[idx].minute = e.target.value;
+                                            // Auto-add
+                                            if (idx === timings.length - 1 && timings.length < 5 && e.target.value && newTimings[idx].hour) {
+                                                newTimings.push({ hour: '', minute: '', text: '' });
+                                            }
+                                            setTimings(newTimings);
+                                        }}
+                                        style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid #ddd' }}
+                                    >
+                                        <option value="">Min</option>
+                                        {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55].map((i) => {
+                                            const val = i.toString().padStart(2, '0');
+                                            return <option key={val} value={val}>{val}</option>;
+                                        })}
+                                    </select>
+                                    {timings.length > 1 && (
+                                        <button
+                                            onClick={() => {
+                                                const newTimings = timings.filter((_, i) => i !== idx);
+                                                setTimings(newTimings);
+                                            }}
+                                            style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer', marginLeft: '5px' }}
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className="form-group">
                         <label>memo</label>

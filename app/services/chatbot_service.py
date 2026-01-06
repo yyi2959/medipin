@@ -54,7 +54,18 @@ def fetch_rag_context(db: Session, user_id: int, query: str) -> str:
         if schedules:
             sch_text = "=== 사용자 복약 일정 ===\n"
             for s in schedules:
-                sch_text += f"- {s.pill_name} ({s.dose}): {s.start_date} {s.timing or ''}\n"
+                try:
+                    # timing1 ~ timing5 수집
+                    t_list = []
+                    for i in range(1, 6):
+                        val = getattr(s, f"timing{i}", None)
+                        if val:
+                            t_list.append(str(val))
+                    time_info = ", ".join(t_list)
+                except Exception:
+                    time_info = ""
+                
+                sch_text += f"- {s.pill_name} ({s.dose}): {s.start_date} {time_info}\n"
             context_parts.append(sch_text)
         else:
             context_parts.append("=== 사용자 복약 일정 ===\n(예정된 일정이 없습니다.)")
@@ -123,7 +134,7 @@ def create_schedule(db: Session, user_id: int, data: dict, user_name: str) -> st
             pill_name=pill_name,
             start_date=start_date,
             end_date=start_date,
-            timing=notes,
+            timing1=notes, # 챗봇 입력 시간은 timing1에 저장
             memo=notes,
             dose=dose,
             notify=True,
@@ -168,6 +179,49 @@ def create_schedule(db: Session, user_id: int, data: dict, user_name: str) -> st
 # =======================================================
 # 4. 핵심 함수: 챗봇 응답 생성 (Gemini)
 # =======================================================
+# 전역 변수로 선택된 모델 이름 캐싱
+SELECTED_MODEL_NAME = None
+
+def get_best_model():
+    global SELECTED_MODEL_NAME
+    if SELECTED_MODEL_NAME:
+        return SELECTED_MODEL_NAME
+
+    try:
+        print("[DEBUG] Searching for available Gemini models...")
+        # API 호출이 가능한 모델 검색
+        available_models = []
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                available_models.append(m.name)
+        
+        print(f"[DEBUG] Found models: {available_models}")
+
+        # 우선순위 목록
+        preferences = ['models/gemini-1.5-flash', 'gemini-1.5-flash', 'models/gemini-pro', 'gemini-pro']
+        
+        for pref in preferences:
+            for name in available_models:
+                # 정확히 일치하거나 name에 포함된 경우 (예: models/gemini-1.5-flash-001)
+                if pref == name or name.endswith(pref):
+                    SELECTED_MODEL_NAME = name
+                    print(f"[DEBUG] ✅ Auto-selected model: {SELECTED_MODEL_NAME}")
+                    return SELECTED_MODEL_NAME
+        
+        # 선호 모델을 찾지 못한 경우 gemini가 포함된 아무 모델이나 선택
+        for name in available_models:
+            if "gemini" in name.lower():
+                SELECTED_MODEL_NAME = name
+                print(f"[DEBUG] ⚠️ Fallback to generic Gemini model: {SELECTED_MODEL_NAME}")
+                return SELECTED_MODEL_NAME
+
+    except Exception as e:
+        print(f"[ERROR] Failed to list models (Check API Key): {e}")
+        
+    # 기본값 (하드코딩)
+    print("[DEBUG] ⚠️ Using default fallback: gemini-pro")
+    return 'gemini-pro'
+
 def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
     # 1. 사용자 정보
     user_summary = get_user_summary(db, user_id)
@@ -181,7 +235,11 @@ def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
     # 2. RAG Context 구성
     rag_data = fetch_rag_context(db, user_id, question)
     
-    # 3. 프롬프트 작성
+    # 3. 프롬프트 작성 (기존 코드 유지)
+    # ... 코드 블록 생략 불가하므로 여기에 다시 포함하거나, 
+    # replace 범위를 조정해야 함.
+    # 사용자의 시스템 프롬프트가 이전에 정의됨.
+    
     system_prompt = f"""
     당신은 친절하고 전문적인 의료 보조 챗봇입니다. 
     사용자의 이름은 {name}이고, 나이는 {age}세입니다.
@@ -196,63 +254,74 @@ def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
     JSON 형식:
     {{
       "intent": "REGISTER_SCHEDULE",
-      "medication_name": "약 이름 (사용자가 말한 약 이름)",
-      "start_date": "YYYY-MM-DD (오늘 날짜 기준 계산)",
-      "notes": "시간 정보 (예: 오후 2시, 점심 식후 등)",
-      "dose": "용량 (예: 1정)"
+      "medication_name": "약 이름",
+      "start_date": "YYYY-MM-DD",
+      "notes": "시간 정보",
+      "dose": "용량"
     }}
 
     [데이터 근거]
     {rag_data}
 
-    데이터에 없는 내용은 일반적인 의학 지식이나 상식 선에서 정중하게 답변하되, 
-    "제공된 데이터에는 없지만..." 처럼 명시해주세요.
-    답변은 한국어로, 친근한 존댓말(해요체)를 사용해주세요.
+    데이터에 없는 내용은 일반적인 의학 지식이나 상식 선에서 답변하되, 
+    출처가 없음을 명시해주세요. 한국어 해요체를 사용하세요.
     """
-    
+
     user_prompt = f"사용자 질문: {question}"
     
     # 4. Gemini 호출
     try:
         api_key = settings.GEMINI_API_KEY
+        if not api_key:
+             api_key = os.getenv("GEMINI_API_KEY")
+        
         if api_key:
+            # 1. API 키 설정 (필수)
             genai.configure(api_key=api_key)
             
-            # 'gemini-1.5-flash' returned 404 (Not Found) for this API key.
-            # Switching to 'gemini-flash-latest' which was confirmed as available in the model list.
-            model = genai.GenerativeModel('gemini-flash-latest')
+            masked = api_key[:4] + "****" + api_key[-4:] if len(api_key) > 8 else "****"
+            print(f"[DEBUG] Using API Key: {masked}")
+            
+            # 2. 모델 자동 선택
+            model_name = get_best_model()
+            model = genai.GenerativeModel(model_name)
         else:
-             return "챗봇 엔진(Gemini)이 설정되지 않았습니다."
+            print("[ERROR] GEMINI_API_KEY is missing!")
+            return "챗봇 엔진 API 키가 설정되지 않았습니다."
 
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
-        response = model.generate_content(full_prompt)
-
-        text_response = response.text.strip()
         
+        print(f"[DEBUG] Generating content with {model_name or 'default'}...")
+        response = model.generate_content(full_prompt)
+        
+        try:
+            text_response = response.text.strip()
+        except ValueError:
+            print(f"[WARN] Response blocked: {response.prompt_feedback}")
+            return "죄송합니다. 안전 정책에 의해 답변이 차단되었습니다."
+
         # JSON 응답 감지 및 처리
-        # Markdown code block 제거 ```json ... ```
         if "REGISTER_SCHEDULE" in text_response:
             try:
-                # { ... } 패턴 찾기
                 match = re.search(r"\{.*\}", text_response, re.DOTALL)
                 if match:
-                    json_str = match.group()
-                    data = json.loads(json_str)
-                    
+                    data = json.loads(match.group())
                     if data.get("intent") == "REGISTER_SCHEDULE":
                         return create_schedule(db, user_id, data, name)
             except Exception as e:
                 print(f"JSON Parsing Error: {e}")
-                # JSON 파싱 실패 시 텍스트 응답 그대로 반환하거나 에러 메시지
                 pass
 
         return text_response
         
     except Exception as e:
         error_msg = str(e)
-        print(f"Gemini API Error: {error_msg}")
+        print(f"!!! Gemini API Error !!!: {error_msg}")
+        traceback.print_exc()
         
-        if "429" in error_msg or "Resource has been exhausted" in error_msg:
-            return "죄송합니다. 현재 AI 서비스 사용량이 많아 잠시 후 다시 시도해 주세요. (Quota Exceeded)"
+        if "404" in error_msg:
+             return f"모델을 찾을 수 없습니다. (Selected: {SELECTED_MODEL_NAME})"
+        if "429" in error_msg:
+            return "사용량이 많아 잠시 후 다시 시도해 주세요. (429 Too Many Requests)"
             
-        return "죄송합니다. 답변을 생성하는 도중 문제가 발생했습니다. (Error: " + error_msg[:50] + "...)"
+        return f"문제 발생: {error_msg[:50]}..."
