@@ -149,29 +149,26 @@
     cursor: pointer;
 }
 
-.calendar-page .col .number {
-    font-size: 14px;
-    color: #333;
-    z-index: 2;
-}
-
 .calendar-page .col.disabled .number {
     color: #eee;
 }
 
-.calendar-page .col.selected .number {
-    color: #fff;
-}
-
-.calendar-page .col.selected::before {
-    content: '';
-    position: absolute;
-    top: 2px;
+.calendar-page .col .number {
+    font-size: 14px;
+    color: #333;
+    z-index: 2;
     width: 30px;
     height: 30px;
-    background-color: #9F63FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 12px;
-    z-index: 1;
+    /* Rounded square */
+}
+
+.calendar-page .col.selected .number {
+    color: #9F63FF;
+    background-color: #eee6ff;
 }
 
 .dot-container {

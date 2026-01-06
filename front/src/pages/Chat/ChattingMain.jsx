@@ -78,7 +78,7 @@ const ChattingMain = () => {
 
   return (
     <div className="chatting-main">
-      <Element />
+      <Element variant="alarm" />
 
       <div className="chat-ui">
         <h1 className="page-title">Chat AI</h1>
@@ -141,25 +141,29 @@ const ChattingMain = () => {
           )}
         </div>
 
-        {/* Input Area */}
-        <div className="input-section">
-          <div className="input-label">What would you like to know?</div>
-          <div className="input-wrapper">
-            <input
-              type="text"
-              className="chat-input"
-              placeholder="Type message here..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            />
-            <button className="send-button" onClick={handleSendMessage}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-          </div>
+
+      </div>
+
+
+
+      {/* Input Area */}
+      <div className="input-section">
+        <div className="input-label">What would you like to know?</div>
+        <div className="input-wrapper">
+          <input
+            type="text"
+            className="chat-input"
+            placeholder="Type message here..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+          />
+          <button className="send-button" onClick={handleSendMessage}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -167,7 +171,7 @@ const ChattingMain = () => {
       <div className="home-bar-container">
         <HomeBar />
       </div>
-    </div>
+    </div >
   );
 };
 

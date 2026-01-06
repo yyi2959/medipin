@@ -64,9 +64,14 @@ const Calendar = () => {
 
     // --- 데이터 패칭 ---
     useEffect(() => {
-        fetchSchedules();
         fetchUsers();
-    }, [currentMonth]);
+    }, []);
+
+    useEffect(() => {
+        if (users.length > 0) {
+            fetchSchedules();
+        }
+    }, [currentMonth, users]);
 
     const fetchUsers = async () => {
         const token = localStorage.getItem("authToken");
@@ -113,18 +118,22 @@ const Calendar = () => {
     }, [location.state]);
 
     const fetchSchedules = async () => {
+        if (users.length === 0) return;
         setLoading(true);
         try {
             const year = currentMonth.getFullYear();
             const month = currentMonth.getMonth() + 1;
-            // API에서 월별 필터링 지원한다고 가정 (router구현됨)
-            const res = await fetch(`${API_URL}/schedule?user_id=${USER_ID}&year=${year}&month=${month}`);
-            if (res.ok) {
-                const data = await res.json();
-                setSchedules(data);
-            } else {
-                console.error("Failed to fetch schedules");
-            }
+
+            // users 배열에 있는 모든 유저(본인+가족)에 대해 스케줄 요청
+            const promises = users.map(u =>
+                fetch(`${API_URL}/schedule?user_id=${u.id}&year=${year}&month=${month}`)
+                    .then(res => res.json())
+            );
+
+            const results = await Promise.all(promises);
+            // results는 배열의 배열이므로 flatten
+            const allSchedules = results.flat();
+            setSchedules(allSchedules);
         } catch (error) {
             console.error("Error fetching schedules:", error);
         } finally {
@@ -310,7 +319,7 @@ const Calendar = () => {
                 // 해당 날짜에 일정이 있는지 확인 (dot 표시용)
                 // 해당 날짜에 일정이 있는 유저들의 고유 ID 추출
                 const dayStr = format(day, 'yyyy-MM-dd');
-                const daySchedules = schedules.filter(s => s.start_date === dayStr);
+                const daySchedules = schedules.filter(s => s.start_date <= dayStr && s.end_date >= dayStr);
                 const userIdsOnDay = [...new Set(daySchedules.map(s => s.user_id))];
 
                 days.push(
@@ -522,29 +531,20 @@ const Calendar = () => {
                 </div>
             </div>
 
-            <div className="calendar-content-sheet">
-                <div
-                    className="calendar-view"
-                    onClick={() => {
-                        // 현재 선택된 날짜의 약 개수 확인
-                        const dayStr = format(selectedDate, 'yyyy-MM-dd');
-                        const countOnDay = schedules.filter(s => s.start_date <= dayStr && s.end_date >= dayStr).length;
-
-                        // 2개 이하: 바로 닫기 (sheetHeight = 0)
-                        // 3개 이상: 첫 클릭 시 25vh로 축소, 두 번째 클릭 시 닫기
-                        if (countOnDay <= 2) {
-                            // 2개 이하일 때는 1/4 단계 생략하고 바로 닫기
-                            if (sheetHeight > 0) setSheetHeight(0);
+            <div className="calendar-content-sheet"
+                onClick={() => {
+                    // 2개 이하: 바로 닫기 (sheetHeight = 0)
+                    // 3개 이상: 첫 클릭 시 25vh로 축소, 두 번째 클릭 시 닫기
+                    if (sheetHeight > 0) {
+                        if (sheetHeight > 25) {
+                            setSheetHeight(25);
                         } else {
-                            // 3개 이상일 때는 두 단계로 닫기
-                            if (sheetHeight > 25) {
-                                setSheetHeight(25); // 첫 클릭: 1/4로 축소
-                            } else if (sheetHeight > 0 && sheetHeight <= 25) {
-                                setSheetHeight(0); // 두 번째 클릭: 완전히 닫기
-                            }
+                            setSheetHeight(0);
                         }
-                    }}
-                >
+                    }
+                }}
+            >
+                <div className="calendar-view">
                     <div className="calendar-header">
                         <div className="icon" onClick={(e) => { e.stopPropagation(); setCurrentMonth(subMonths(currentMonth, 1)); }}>
                             <img src={preIcon} alt="prev" style={{ transform: "rotate(0deg)" }} />
@@ -610,22 +610,28 @@ const Calendar = () => {
                             No pills for today.
                         </div>
                     ) : (
-                        filteredSchedules.map((item) => (
-                            <div
-                                className={`event-card ${item.is_taken ? "taken" : ""}`}
-                                key={item.id}
-                                onClick={() => openDetailSheet(item)}
-                            >
-                                <div className="event-time">
-                                    <span className="dot" style={{ borderColor: item.is_taken ? '#aaa' : '#9F63FF', background: item.is_taken ? '#aaa' : 'transparent' }}></span>
-                                    {item.timing || "Anytime"}
+                        filteredSchedules.map((item) => {
+                            const userIndex = users.findIndex(u => u.id === item.user_id);
+                            // Colors: Purple, Green, Blue
+                            const colorHex = ["#9F63FF", "#00C48C", "#5B4DFF"][userIndex % 3] || "#9F63FF";
+
+                            return (
+                                <div
+                                    className={`event-card ${item.is_taken ? "taken" : ""}`}
+                                    key={item.id}
+                                    onClick={() => openDetailSheet(item)}
+                                >
+                                    <div className="event-time">
+                                        <span className="dot" style={{ borderColor: item.is_taken ? '#aaa' : colorHex, background: item.is_taken ? '#aaa' : 'transparent' }}></span>
+                                        {item.timing || "Anytime"}
+                                    </div>
+                                    <div className="event-title" style={{ textDecoration: item.is_taken ? "line-through" : "none", color: item.is_taken ? "#aaa" : "#333" }}>
+                                        {item.pill_name}
+                                    </div>
+                                    <div className="event-desc">{item.memo || item.dose}</div>
                                 </div>
-                                <div className="event-title" style={{ textDecoration: item.is_taken ? "line-through" : "none", color: item.is_taken ? "#aaa" : "#333" }}>
-                                    {item.pill_name}
-                                </div>
-                                <div className="event-desc">{item.memo || item.dose}</div>
-                            </div>
-                        ))
+                            )
+                        })
                     )}
                 </div>
 
@@ -795,11 +801,9 @@ const Calendar = () => {
                 )}
             </div>
 
-            {!(sheetHeight > 5 || isAddMode || detailSheetOpen) && (
-                <div className="bottom-nav-container">
-                    <HomeBar />
-                </div>
-            )}
+            <div className="bottom-nav-container" style={{ display: (sheetHeight > 5 || isAddMode || detailSheetOpen) ? 'none' : 'block' }}>
+                <HomeBar />
+            </div>
         </div >
     );
 };
