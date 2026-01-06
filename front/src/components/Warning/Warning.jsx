@@ -24,6 +24,7 @@ export const Warning = ({ one, onClose }) => {
               {one === "register-complete" && <>Registration complete!</>}
               {one === "medication-complete" && <>Registration complete!</>}
               {one === "welcome" && <>Welcome to our MediPin!</>}
+              {one === "logout" && <>See you soon!</>}
             </div>
 
             <img className="line" alt="line" src={warningLine} />
@@ -81,6 +82,14 @@ export const Warning = ({ one, onClose }) => {
                 Medication schedule saved successfully.
               </>
             )}
+
+            {one === "logout" && (
+              <>
+                You’re all logged out.
+                <br />
+                Come back anytime!
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -97,6 +106,7 @@ Warning.propTypes = {
     "unrequire-email",
     "register-complete",
     "welcome",
+    "logout",
     "hidden",
   ]),
   onClose: PropTypes.func.isRequired,

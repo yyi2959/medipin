@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Element } from "../../components/Element/Element";
+
 import { SearchResultIn } from "../../components/SearchResultIn/SearchResultIn";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 
-import preIcon from "./pre_icon.svg";
+
 import AddScheduleModal from "../../components/AddScheduleModal/AddScheduleModal"; // ✅ Import Modal
 
+import { useAlarm } from "../../context/AlarmContext";
 import "./style.css";
 
 const SearchDetail = () => {
   const navigate = useNavigate();
+  const { toggleOverlay } = useAlarm();
   const { query } = useParams(); // ✅ 검색어 URL 파라미터
+
+  // Icons
+  const BackIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 18L9 12L15 6" />
+    </svg>
+  );
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,96 +76,98 @@ const SearchDetail = () => {
   return (
     <div className="search-detail">
       {/* 헤더 */}
-      <Element className="header" />
-
-      {/* 헤더 네비게이션 */}
-      <div className="frame-6">
-        <div className="fill-wrapper" onClick={() => navigate(query ? "/search_main" : "/mypage")}>
-          {/* 쿼리가 있으면 검색메인, 검색기록 모드면 마이페이지로 이동 */}
-          <img className="fill" alt="back" src={preIcon} />
+      <div className="mypage-header">
+        <div style={{ width: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+          <button onClick={() => navigate(-1)} className="mypage-back-btn">
+            <BackIcon />
+          </button>
         </div>
-
-        <div className="text-wrapper-6">{query ? query : "검색 기록"}</div>
+        <div className="header-title">My page</div>
+        <div className="icon-wrapper" onClick={toggleOverlay}>
+          <div className="icon-alarm" />
+        </div>
       </div>
 
-      {/* 결과 영역 */}
-      <div className="search-result-2" style={{ padding: '20px' }}>
+      <div className="content-scrollable">
+        {/* 결과 영역 */}
+        <div className="search-result-2">
+          {/* 타이틀 표시 (필요 시) */}
+          <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px' }}>
+            {query ? `"${query}" 검색 결과` : "Search List"}
+          </h2>
 
-        {/* Case A: 검색 모드 */}
-        {query && (
-          <>
-            {!loading && results.length === 0 && <p>검색 결과가 없습니다.</p>}
-            {!loading && results.length > 0 && (
-              <div className="frame-7">
-                {results.map((item) => (
-                  <SearchResultIn
-                    key={item.id}
-                    imageUrl={item.item_image}
-                    title={item.drug_name}
-                    onPlusClick={() => {
-                      setSelectedPillName(item.drug_name);
-                      setIsModalOpen(true);
-                    }}
-                    onImageClick={() => navigate(`/search/result/${item.id}`)}
-                  />
-                ))}
-              </div>
-            )}
-          </>
-        )}
+          {/* Case A: 검색 모드 */}
+          {query && (
+            <>
+              {loading && <p>로딩 중...</p>}
+              {!loading && results.length === 0 && <p>검색 결과가 없습니다.</p>}
+              {!loading && results.length > 0 && (
+                <div className="frame-7">
+                  {results.map((item) => (
+                    <SearchResultIn
+                      key={item.id}
+                      imageUrl={item.item_image}
+                      title={item.drug_name}
+                      onPlusClick={() => {
+                        setSelectedPillName(item.drug_name);
+                        setIsModalOpen(true);
+                      }}
+                      onImageClick={() => navigate(`/search/result/${item.id}`)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
 
-        {/* ✅ 복약 일정 추가 모달 */}
-        <AddScheduleModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          defaultPillName={selectedPillName}
-        />
+          {/* ✅ 복약 일정 추가 모달 */}
+          <AddScheduleModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            defaultPillName={selectedPillName}
+          />
 
-        {/* Case B: 히스토리 모드 (쿼리 없음) */}
-        {!query && (
-          <div>
-            {history.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#888' }}>최근 검색 기록이 없습니다.</p>
-            ) : (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {history.map((h, idx) => (
-                  <li
-                    key={idx}
-                    onClick={() => navigate(`/search/detail/${h}`)}
-                    style={{
-                      padding: '15px 0',
-                      borderBottom: '1px solid #eee',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <span>🕒 {h}</span>
-                    <span style={{ color: '#ccc' }}>↗</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {history.length > 0 && (
-              <button
-                onClick={handleClearHistory}
-                style={{
-                  marginTop: '20px',
-                  width: '100%',
-                  padding: '10px',
-                  backgroundColor: '#eee',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#555'
-                }}
-              >
-                기록 전체 삭제
-              </button>
-            )}
-          </div>
-        )}
-
+          {/* Case B: 히스토리 모드 (쿼리 없음) */}
+          {!query && (
+            <div>
+              {history.length === 0 ? (
+                <p style={{ textAlign: 'center', color: '#888' }}>최근 검색 기록이 없습니다.</p>
+              ) : (
+                <ul className="history-list">
+                  {history.map((h, idx) => (
+                    <li
+                      key={idx}
+                      onClick={() => navigate(`/search/detail/${h}`)}
+                      className="history-item"
+                    >
+                      <span>{h}</span>
+                      <span style={{ color: '#ccc' }}>↗</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {history.length > 0 && (
+                <button
+                  onClick={handleClearHistory}
+                  style={{
+                    marginTop: '20px',
+                    width: '100%',
+                    padding: '16px',
+                    backgroundColor: '#9F63FF',
+                    border: 'none',
+                    borderRadius: '16px',
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Delete all history
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+        {/* Padding for bottom nav */}
+        <div style={{ height: 80 }}></div>
       </div>
 
       {/* 하단 네비게이션 */}

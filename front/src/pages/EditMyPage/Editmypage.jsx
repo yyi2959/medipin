@@ -1,16 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../api/config";
-import "./style.css"; // Reuse MyPage styles or create new
+import { useAlarm } from "../../context/AlarmContext";
+import "./style.css";
 
 const EditMyPage = () => {
     const navigate = useNavigate();
+    const { toggleOverlay } = useAlarm();
+
+    // Icons
+    const BackIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18L9 12L15 6" />
+        </svg>
+    );
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         phone_number: "",
         birthdate: "",
-        gender: "male"
+        gender: "male",
+        height: "",
+        weight: "",
+        special_note: ""
     });
     const [loading, setLoading] = useState(true);
 
@@ -29,12 +42,11 @@ const EditMyPage = () => {
                 });
                 if (res.ok) {
                     const data = await res.json();
-                    // 데이터 매핑 (API 응답 필드명 확인 필요)
                     setFormData({
                         name: data.name || "",
                         email: data.email || "",
-                        phone_number: data.phone_number || "",
-                        birthdate: data.birthdate || "",
+                        phone_number: data.phone_num || "", // API key check
+                        birthdate: data.birth_date || "", // API key check
                         gender: data.gender || "male",
                         height: data.height || "",
                         weight: data.weight || "",
@@ -54,6 +66,15 @@ const EditMyPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem("authToken");
+
+        // Format dates or numbers if necessary
+        const payload = {
+            ...formData,
+            // Convert to numbers if strings are present
+            height: formData.height ? parseFloat(formData.height) : null,
+            weight: formData.weight ? parseFloat(formData.weight) : null,
+        };
+
         try {
             const res = await fetch(`${API_BASE_URL}/user/profile/detail`, {
                 method: "PUT",
@@ -61,10 +82,10 @@ const EditMyPage = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             });
             if (res.ok) {
-                alert("정보가 수정되었습니다.");
+                alert("수정되었습니다.");
                 navigate("/mypage");
             } else {
                 const errData = await res.json();
@@ -79,129 +100,128 @@ const EditMyPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="edit-mypage-container"></div>;
 
     return (
-        <div className="my-page-screen" style={{ overflowY: 'auto' }}>
-            <div className="frame-3">
-                <div className="group" onClick={() => navigate(-1)} style={{ cursor: 'pointer' }}>
-                    <div className="fill">⬅️</div>
+        <div className="edit-mypage-container">
+            {/* Header */}
+            <div className="mypage-header">
+                <div style={{ width: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <button onClick={() => navigate(-1)} className="mypage-back-btn">
+                        <BackIcon />
+                    </button>
                 </div>
-                <div className="my-page-2" style={{ fontWeight: 'bold' }}>내 정보 수정</div>
-                <div style={{ width: 24 }}></div>
+                <div className="header-title">My page</div>
+                <div className="icon-wrapper" onClick={toggleOverlay}>
+                    <div className="icon-alarm" />
+                </div>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div className="content-scrollable">
+                <form onSubmit={handleSubmit}>
 
-                <div>
-                    <label>이메일 (변경 불가)</label>
-                    <input
-                        type="email"
-                        value={formData.email}
-                        disabled
-                        style={{ width: '100%', padding: '10px', backgroundColor: '#f0f0f0' }}
-                    />
-                </div>
-
-                <div>
-                    <label>이름</label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        style={{ width: '100%', padding: '10px' }}
-                    />
-                </div>
-
-                <div>
-                    <label>전화번호</label>
-                    <input
-                        type="text"
-                        name="phone_number"
-                        value={formData.phone_number}
-                        onChange={handleChange}
-                        placeholder="010-0000-0000"
-                        style={{ width: '100%', padding: '10px' }}
-                    />
-                </div>
-
-                <div>
-                    <label>생년월일</label>
-                    <input
-                        type="date"
-                        name="birthdate"
-                        value={formData.birthdate}
-                        onChange={handleChange}
-                        style={{ width: '100%', padding: '10px' }}
-                    />
-                </div>
-
-                <div>
-                    <label>성별</label>
-                    <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        style={{ width: '100%', padding: '10px' }}
-                    >
-                        <option value="male">남성</option>
-                        <option value="female">여성</option>
-                    </select>
-                </div>
-
-                <div style={{ display: 'flex', gap: 10 }}>
-                    <div style={{ flex: 1 }}>
-                        <label>키 (cm)</label>
+                    {/* Read Only Email */}
+                    <div className="form-group">
+                        <label>Email</label>
                         <input
-                            type="number"
-                            name="height"
-                            value={formData.height}
-                            onChange={handleChange}
-                            style={{ width: '100%', padding: '10px' }}
+                            type="email"
+                            value={formData.email}
+                            disabled
                         />
                     </div>
-                    <div style={{ flex: 1 }}>
-                        <label>몸무게 (kg)</label>
+
+                    {/* Name */}
+                    <div className="form-group">
+                        <label>Name</label>
                         <input
-                            type="number"
-                            name="weight"
-                            value={formData.weight}
+                            type="text"
+                            name="name"
+                            value={formData.name}
                             onChange={handleChange}
-                            style={{ width: '100%', padding: '10px' }}
+                            placeholder="Enter your name"
                         />
                     </div>
-                </div>
 
-                <div>
-                    <label>특이사항 (알러지 등)</label>
-                    <textarea
-                        name="special_note"
-                        value={formData.special_note}
-                        onChange={handleChange}
-                        rows={3}
-                        style={{ width: '100%', padding: '10px' }}
-                    />
-                </div>
+                    {/* Phone */}
+                    <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                            type="text"
+                            name="phone_number"
+                            value={formData.phone_number}
+                            onChange={handleChange}
+                            placeholder="010-0000-0000"
+                        />
+                    </div>
 
-                <button
-                    type="submit"
-                    style={{
-                        marginTop: '20px',
-                        padding: '15px',
-                        backgroundColor: '#6C48F2',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontSize: '16px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer'
-                    }}
-                >
-                    저장하기
-                </button>
+                    {/* Birthdate & Gender */}
+                    <div className="row-group">
+                        <div className="form-group half">
+                            <label>Birthdate</label>
+                            <input
+                                type="date"
+                                name="birthdate"
+                                value={formData.birthdate}
+                                onChange={handleChange}
+                            />
+                        </div>
 
-            </form>
+                        <div className="form-group" style={{ width: '120px' }}>
+                            <label>Gender</label>
+                            <select
+                                name="gender"
+                                value={formData.gender}
+                                onChange={handleChange}
+                            >
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Height & Weight */}
+                    <div className="row-group">
+                        <div className="form-group half">
+                            <label>Height (cm)</label>
+                            <input
+                                type="number"
+                                name="height"
+                                value={formData.height}
+                                onChange={handleChange}
+                                placeholder="cm"
+                            />
+                        </div>
+
+                        <div className="form-group half">
+                            <label>Weight (kg)</label>
+                            <input
+                                type="number"
+                                name="weight"
+                                value={formData.weight}
+                                onChange={handleChange}
+                                placeholder="kg"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Special Note */}
+                    <div className="form-group">
+                        <label>Special Note (Allergies, etc)</label>
+                        <textarea
+                            name="special_note"
+                            value={formData.special_note}
+                            onChange={handleChange}
+                            rows={3}
+                            placeholder="Enter any special notes..."
+                        />
+                    </div>
+
+                    <button type="submit" className="save-btn">
+                        Save
+                    </button>
+
+                </form>
+            </div>
         </div>
     );
 };

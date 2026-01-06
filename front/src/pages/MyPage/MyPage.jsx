@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import "./style.css";
@@ -6,11 +6,10 @@ import "./style.css";
 // 누락된 이미지/아이콘 컴포넌트 임시 대체
 const User = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc', borderRadius: '50%' }} />;
 const SearchOutline = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc' }} />;
-const Pill = () => <div style={{ width: 30, height: 30, backgroundColor: '#ccc' }} />;
 
-import { useEffect, useState } from "react";
 import { useAlarm } from "../../context/AlarmContext";
 import { API_BASE_URL } from "../../api/config";
+import { Warning } from "../../components/Warning/Warning";
 
 // Icons 
 const UserIcon = () => (
@@ -25,11 +24,7 @@ const SearchIcon = () => (
     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
   </svg>
 );
-const PillIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="6" width="20" height="12" rx="6" ry="6"></rect>
-  </svg>
-);
+
 const LogoutIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -42,12 +37,19 @@ const ChevronRight = () => (
     <polyline points="9 18 15 12 9 6"></polyline>
   </svg>
 );
+const EditIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+  </svg>
+);
 
 export const MyPageScreen = () => {
   const navigate = useNavigate();
   const { toggleOverlay } = useAlarm();
   const [user, setUser] = useState({ name: "MediPin User", email: "loading...", age: 0 });
   const [familyMembers, setFamilyMembers] = useState([]);
+  const [warningType, setWarningType] = useState(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -106,9 +108,7 @@ export const MyPageScreen = () => {
     <div className="my-page-container">
       {/* Header */}
       <div className="mypage-header">
-        <button onClick={() => navigate(-1)} className="mypage-back-btn">
-          <BackIcon />
-        </button>
+        <div style={{ width: 56 }}></div>
         <div className="header-title">My page</div>
         <div className="icon-wrapper" onClick={toggleOverlay}>
           <div className="icon-alarm" />
@@ -117,7 +117,7 @@ export const MyPageScreen = () => {
 
       <div className="content-scrollable">
         {/* 1. Family Cards Section (Carousel style if many) */}
-        <div className="section-label">Family Members</div>
+        <div className="section-label">Members</div>
         {familyMembers.map((member) => (
           <div key={member.id} className="profile-card family-card">
             <div className="card-left">
@@ -133,7 +133,7 @@ export const MyPageScreen = () => {
             </div>
             <div className="card-right">
               <button className="change-user-btn" onClick={() => navigate("/edit-family", { state: member })}>
-                Edit<br />Info
+                <EditIcon />
               </button>
             </div>
           </div>
@@ -145,7 +145,7 @@ export const MyPageScreen = () => {
         </button>
 
         {/* 3. Main User Card */}
-        <div className="section-label" style={{ marginTop: 20 }}>Main User</div>
+        <div className="section-label" style={{ marginTop: 10 }}>Main User</div>
         <div className="profile-card user-card">
           <div className="user-avatar">
             <UserIcon /> {/* Placeholder for image */}
@@ -161,18 +161,26 @@ export const MyPageScreen = () => {
           <MenuRow icon={UserIcon} label="Edit profile" onClick={() => navigate("/edit-mypage")} />
           <div className="menu-divider"></div>
           <MenuRow icon={SearchIcon} label="Search List" onClick={() => navigate("/search/detail")} />
+
           <div className="menu-divider"></div>
-          <MenuRow icon={PillIcon} label="Pill List" onClick={() => navigate("/pill-management")} />
-          <div className="menu-divider"></div>
-          <MenuRow icon={LogoutIcon} label="Logout" onClick={() => {
-            localStorage.removeItem("authToken");
-            navigate("/login");
-          }} />
+          <MenuRow icon={LogoutIcon} label="Logout" onClick={() => setWarningType("logout")} />
         </div>
 
         {/* Padding for bottom nav */}
         <div style={{ height: 80 }}></div>
       </div>
+
+      {/* Warning Modal */}
+      <Warning
+        one={warningType}
+        onClose={() => {
+          if (warningType === "logout") {
+            localStorage.removeItem("authToken");
+            navigate("/login");
+          }
+          setWarningType(null);
+        }}
+      />
     </div>
   );
 };

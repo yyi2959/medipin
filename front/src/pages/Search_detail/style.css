@@ -1,138 +1,117 @@
 /* =========================
-   SearchDetail 전체 페이지
+   SearchDetail 전체 페이지 (MyPage 스타일 계승)
    ========================= */
 .search-detail {
-  background-color: #f9f9fb;
-  min-height: 100vh;
-  min-width: 393px;
+  background-color: #9F63FF;
+  /* Purple header background */
   width: 100%;
-  position: relative;
-  overflow: hidden;
-  /* 전체 스크롤 방지 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: #333;
 }
 
-/* =========================
-   헤더
-   ========================= */
-.search-detail .header {
-  position: absolute !important;
-  top: 0 !important;
-  left: 50% !important;
-  transform: translateX(-50%);
-  z-index: 10;
+/* 헤더 */
+.mypage-header {
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: transparent;
+  color: white;
+  flex-shrink: 0;
 }
 
-/* =========================
-   검색어 표시 영역
-   ========================= */
-.search-detail .frame-6 {
-  position: absolute;
-  top: 112px;
-  left: 50%;
-  transform: translateX(-200%);
-
+/* 뒤로가기 버튼 스타일 추가 */
+.mypage-header .mypage-back-btn {
+  background: #EEE6FF;
+  border: none;
+  padding: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-
-  width: fit-content;
-  /* 핵심 */
-}
-
-
-/* 뒤로가기 아이콘 배경 */
-.search-detail .fill-wrapper {
   width: 40px;
   height: 40px;
-  background-color: #eee6ff;
-  border-radius: 20px;
-  position: relative;
+  border-radius: 50%;
+}
+
+.mypage-header .header-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: white !important;
+  line-height: normal;
+}
+
+/* 알림 아이콘 */
+.mypage-header .icon-wrapper {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
-/* 뒤로가기 아이콘 */
-.search-detail .fill {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 18px;
-  height: 18px;
-  transform: translate(-50%, -50%);
-}
-
-/* 검색어 텍스트 */
-.search-detail .text-wrapper-6 {
-  font-family: "Manrope", Helvetica;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 24px;
-  color: #000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.mypage-header .icon-alarm {
+  width: 36px;
+  height: 36px;
+  background-image: url("../../components/Element/alarm_icon.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 /* =========================
-   검색 결과 영역 (스크롤)
+   콘텐츠 영역 (스크롤 가능)
    ========================= */
-.search-detail .search-result-2 {
-  position: absolute;
-  top: 167px;
-  left: 50%;
-  transform: translateX(-50%);
-
-  width: 342px;
-  height: calc(100vh - 320px);
-
+.content-scrollable {
+  flex: 1;
+  background-color: #F8F9FA;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  padding: 0;
+  /* 내부에서 여백 조절 */
+  overflow-y: auto;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  align-items: center;
-
-  overflow-y: auto;
-  /* ✅ 내부 스크롤 */
-  padding-bottom: 20px;
-
-  /* 스크롤바 숨기기 */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
 }
 
-.search-detail .search-result-2::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
+/* 검색결과 레이어 */
+.search-result-2 {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 결과 그리드 (2열) */
-.search-detail .frame-7 {
+.frame-7 {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  /* ✅ 2열 고정 */
-  gap: 24px 20px;
+  gap: 20px;
 }
 
-/* =========================
-   SearchResultIn 카드 보정
-   ========================= */
-.search-detail .search-result-in-instance {
-  position: relative !important;
-  left: unset !important;
-  top: unset !important;
+/* 히스토리 리스트 */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* =========================
-   하단 Search 바
-   ========================= */
-/* =========================
-   하단 Search 바 -> HomeBar Container
-   ========================= */
-.search-detail .bottom-nav-container {
-  position: absolute;
-  bottom: 0;
+.history-item {
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 하단 네비게이션 컨테이너 */
+.bottom-nav-container {
   width: 100%;
-  left: 0;
-  z-index: 100;
+  background-color: white;
+  flex-shrink: 0;
 }
