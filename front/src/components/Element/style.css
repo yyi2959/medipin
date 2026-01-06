@@ -80,3 +80,10 @@
   height: 167px;
   padding: 32px 16px 20px;
 }
+
+/* 🔹 4. 채팅 목록 헤더 (채팅 목록용) */
+.element--chat-list {
+  height: 180px;
+  /* Slightly taller for chat list */
+  padding: 32px 16px 20px;
+}

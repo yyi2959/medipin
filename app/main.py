@@ -23,6 +23,7 @@ import app.models.medication
 import app.models.drug_info
 import app.models.map
 import app.models.refresh_token
+import app.models.chat_history
 
 app = FastAPI(title="Medipin Backend")
 

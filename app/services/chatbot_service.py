@@ -223,6 +223,13 @@ def get_best_model():
     return 'gemini-pro'
 
 def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
+    from app.models.chat_history import ChatHistory
+
+    # 0. Save User Question to DB
+    user_msg = ChatHistory(user_id=user_id, message=question, sender="user")
+    db.add(user_msg)
+    db.commit()
+    
     # 1. 사용자 정보
     user_summary = get_user_summary(db, user_id)
     if not user_summary:
@@ -307,10 +314,20 @@ def generate_chatbot_response(db: Session, user_id: int, question: str) -> str:
                 if match:
                     data = json.loads(match.group())
                     if data.get("intent") == "REGISTER_SCHEDULE":
-                        return create_schedule(db, user_id, data, name)
+                        final_response = create_schedule(db, user_id, data, name)
+                        # Save Bot's final confirmation to history
+                        bot_msg = ChatHistory(user_id=user_id, message=final_response, sender="bot")
+                        db.add(bot_msg)
+                        db.commit()
+                        return final_response
             except Exception as e:
                 print(f"JSON Parsing Error: {e}")
                 pass
+
+        # Regular Bot Response (not schedule)
+        bot_msg = ChatHistory(user_id=user_id, message=text_response, sender="bot")
+        db.add(bot_msg)
+        db.commit()
 
         return text_response
         

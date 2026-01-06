@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.security.jwt_handler import get_current_user
 from app.models.user import UserProfile
+from app.models.chat_history import ChatHistory
 
 # 🚨 schemas 파일이 존재한다고 가정
 from app.schemas.chatbot import ChatRequest, ChatResponse
@@ -46,3 +47,44 @@ def chatbot_query(
         )
     
     return {"response": response_text}
+
+@chatbot_router.get("/history")
+def get_chatbot_history(
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """
+    로그인한 사용자의 채팅 기록을 가져옵니다.
+    """
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="인증되지 않은 사용자입니다."
+        )
+
+    history = db.query(ChatHistory).filter(ChatHistory.user_id == current_user.id).order_by(ChatHistory.created_at.desc()).all()
+    
+    return history
+
+@chatbot_router.post("/read")
+def mark_as_read(
+    db: Session = Depends(get_db),
+    current_user: UserProfile = Depends(get_current_user)
+):
+    """
+    사용자의 읽지 않은 메시지를 읽음 처리합니다.
+    """
+    if not current_user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="인증되지 않은 사용자입니다."
+        )
+
+    db.query(ChatHistory).filter(
+        ChatHistory.user_id == current_user.id,
+        ChatHistory.is_read == False,
+        ChatHistory.sender == "bot"
+    ).update({"is_read": True})
+    
+    db.commit()
+    return {"status": "success"}

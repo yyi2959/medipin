@@ -6,6 +6,7 @@ import { AiIcon } from "../../components/AiIcon";
 import { ChatbubbleEllipsesOutline } from "../../components/ChatbubbleEllipsesOutline";
 import { Element } from "../../components/Element";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
+import { ChatHistory } from "./ChatHistory";
 
 import doctorPin from "./doctor_pin.png";
 import "./style.css";
@@ -16,7 +17,27 @@ const ChattingMain = () => {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("Chat");
   const scrollRef = useRef();
+
+  const markMessagesAsRead = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+    try {
+      await fetch(`${API_BASE_URL}/chatbot/read`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (error) {
+      console.error("Error marking messages as read:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "Chat") {
+      markMessagesAsRead();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -79,21 +100,30 @@ const ChattingMain = () => {
 
   return (
     <div className="chatting-main">
-      <Element variant="alarm" />
+      <Element variant={activeTab === "History" ? "chat-list" : "alarm"} />
 
-      <div className="chat-ui">
-        <h1 className="page-title">Chat AI</h1>
+      <div className={`chat-ui ${activeTab === "History" ? "history-mode" : ""}`}>
+        {activeTab === "Chat" && <h1 className="page-title">Chat AI</h1>}
 
         <div className="tabs">
-          <div className="tab active">
+          <div
+            className={`tab ${activeTab === "Chat" ? "active" : ""}`}
+            onClick={() => setActiveTab("Chat")}
+          >
             <ChatbubbleEllipsesOutline className="tab-icon" />
             <span>Chat</span>
           </div>
-          <div className="tab">
+          <div
+            className={`tab ${activeTab === "History" ? "active" : ""}`}
+            onClick={() => setActiveTab("History")}
+          >
             <span className="tab-icon-placeholder">🕒</span>
             <span>History</span>
           </div>
-          <div className="tab">
+          <div
+            className={`tab ${activeTab === "Setting" ? "active" : ""}`}
+            onClick={() => setActiveTab("Setting")}
+          >
             <span className="tab-icon-placeholder">⚙️</span>
             <span>Setting</span>
           </div>
@@ -101,72 +131,76 @@ const ChattingMain = () => {
 
         {/* Main Content Area */}
         <div className="chat-content-area" ref={scrollRef}>
-          {messages.length === 0 ? (
-            <div className="suggestion-container">
-              <div className="suggestion-header">Suggestion</div>
-              <div className="suggestion-content">
-                <div className="character-section">
-                  <img src={doctorPin} alt="Doctor Pin" className="doctor-pin-img" />
-                </div>
-                <div className="bubbles-section">
-                  <div className="suggestion-bubble" onClick={() => setInputValue("해당 성분이 들어간 약 목록을 모두 보여주세요.")}>
-                    <div className="bubble-title">원하는 약 목록을 물어보세요.</div>
-                    <div className="bubble-desc">"해당 성분이 들어간 약 목록을 모두 보여주세요."</div>
+          {activeTab === "Chat" ? (
+            messages.length === 0 ? (
+              <div className="suggestion-container">
+                <div className="suggestion-header">Suggestion</div>
+                <div className="suggestion-content">
+                  <div className="character-section">
+                    <img src={doctorPin} alt="Doctor Pin" className="doctor-pin-img" />
                   </div>
-                  <div className="suggestion-bubble" onClick={() => setInputValue("알레르기를 가지고 있는데 해당 성분이 들어간 약을 복용해도 괜찮을까요?")}>
-                    <div className="bubble-title">알레르기 성분을 물어보세요.</div>
-                    <div className="bubble-desc">"알레르기를 가지고 있는데 해당 성분이 들어간 약을 복용해도 괜찮을까요?"</div>
-                  </div>
-                  <div className="suggestion-bubble" onClick={() => setInputValue("제가 복용하고 있는 약과 새로운 약이 괜찮은 조합인가요?")}>
-                    <div className="bubble-title">복용중인 약과의 조합을 물어보세요.</div>
-                    <div className="bubble-desc">"제가 복용하고 있는 약과 새로운 약이 괜찮은 조합인가요?"</div>
+                  <div className="bubbles-section">
+                    <div className="suggestion-bubble" onClick={() => setInputValue("해당 성분이 들어간 약 목록을 모두 보여주세요.")}>
+                      <div className="bubble-title">원하는 약 목록을 물어보세요.</div>
+                      <div className="bubble-desc">"해당 성분이 들어간 약 목록을 모두 보여주세요."</div>
+                    </div>
+                    <div className="suggestion-bubble" onClick={() => setInputValue("알레르기를 가지고 있는데 해당 성분이 들어간 약을 복용해도 괜찮을까요?")}>
+                      <div className="bubble-title">알레르기 성분을 물어보세요.</div>
+                      <div className="bubble-desc">"알레르기를 가지고 있는데 해당 성분이 들어간 약을 복용해도 괜찮을까요?"</div>
+                    </div>
+                    <div className="suggestion-bubble" onClick={() => setInputValue("제가 복용하고 있는 약과 새로운 약이 괜찮은 조합인가요?")}>
+                      <div className="bubble-title">복용중인 약과의 조합을 물어보세요.</div>
+                      <div className="bubble-desc">"제가 복용하고 있는 약과 새로운 약이 괜찮은 조합인가요?"</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="messages-list">
-              {messages.map((msg, index) => (
-                <div key={index} className={`message-bubble ${msg.sender}`}>
-                  <div className="message-content">
-                    {msg.text}
+            ) : (
+              <div className="messages-list">
+                {messages.map((msg, index) => (
+                  <div key={index} className={`message-bubble ${msg.sender}`}>
+                    <div className="message-content">
+                      {msg.text}
+                    </div>
                   </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="loading-message">
-                  메디핀이 답변을 생각 중이에요...
-                </div>
-              )}
-            </div>
+                ))}
+                {isLoading && (
+                  <div className="loading-message">
+                    메디핀이 답변을 생각 중이에요...
+                  </div>
+                )}
+              </div>
+            )
+          ) : activeTab === "History" ? (
+            <ChatHistory />
+          ) : (
+            <div className="setting-placeholder">Setting content coming soon...</div>
           )}
         </div>
-
-
       </div>
 
-
-
-      {/* Input Area */}
-      <div className="input-section">
-        <div className="input-label">What would you like to know?</div>
-        <div className="input-wrapper">
-          <input
-            type="text"
-            className="chat-input"
-            placeholder="Type message here..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-          />
-          <button className="send-button" onClick={handleSendMessage}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+      {/* Input Area - Only show in Chat tab */}
+      {activeTab === "Chat" && (
+        <div className="input-section">
+          <div className="input-label">What would you like to know?</div>
+          <div className="input-wrapper">
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="Type message here..."
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+            />
+            <button className="send-button" onClick={handleSendMessage}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Bottom Navigation */}
       <div className="home-bar-container">
