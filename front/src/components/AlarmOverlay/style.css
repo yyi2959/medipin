@@ -99,3 +99,20 @@
     color: #9f63ff;
     font-weight: 500;
 }
+.view-all-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #EDE9FE;
+    color: #9F63FF;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.view-all-btn:hover {
+    background-color: #DDD6FE;
+}

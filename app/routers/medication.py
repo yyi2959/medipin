@@ -198,6 +198,13 @@ def get_schedules(
     if user_id:
         query = query.filter(MedicationSchedule.user_id == user_id)
     
+    # 2026-01-06 수정: year/month가 비어있으면 현재 날짜 기준
+    if not year or not month:
+        from datetime import datetime
+        now = datetime.now()
+        year = now.year
+        month = now.month
+
     if year and month:
         # ✅ 해당 월의 시작일과 종료일 계산 (예: 2026-02-01 ~ 2026-02-28)
         import calendar

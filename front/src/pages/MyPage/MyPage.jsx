@@ -162,7 +162,7 @@ export const MyPageScreen = () => {
           <div className="menu-divider"></div>
           <MenuRow icon={SearchIcon} label="Search List" onClick={() => navigate("/search/detail")} />
           <div className="menu-divider"></div>
-          <MenuRow icon={PillIcon} label="Pill List" onClick={() => navigate("/pill-management")} />
+          <MenuRow icon={PillIcon} label="Notification List" onClick={() => navigate("/notifications")} />
           <div className="menu-divider"></div>
           <MenuRow icon={LogoutIcon} label="Logout" onClick={() => {
             localStorage.removeItem("authToken");

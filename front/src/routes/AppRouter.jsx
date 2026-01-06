@@ -11,70 +11,68 @@ import Welcome from "../pages/Welcome/Welcome";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 
+// 검색
 import SearchMain from "../pages/Search_main/SearchMain";
 import { Search } from "../pages/Search/Search";
 import SearchDetail from "../pages/Search_detail/SearchDetail";
 import SearchResultInfo from "../pages/Search_result_info/Search_result_info";
 import { SearchCamera } from "../pages/SearchCamera/SearchCamera";
 
+// 마이페이지/가족 관리
 import EditMyPage from "../pages/EditMyPage/Editmypage";
 import AddFamily from "../pages/AddFamily/AddFamily";
-import EditFamily from "../pages/EditFamily/EditFamily"; // ✅ Import
+import EditFamily from "../pages/EditFamily/EditFamily";
+import { MyPageScreen } from "../pages/MyPage/MyPage";
 
-/* 마이페이지 */
-import { MyPageScreen } from "../pages/MyPage/MyPage"; // 🚨 추가
-
-/* 지도 */
+// 지도
 import MapMain from "../pages/Map_main/MapMain";
 import MapRInfo from "../pages/MapRInfo/MapRInfo";
 
-/* OCR */
+// OCR
 import OcrResult from "../pages/OCR/OcrResult";
 
-/* 캘린더 */
+// 캘린더
 import Calendar from "../pages/Calendar/Calendar";
 
-/* 챗봇 */
+// 챗봇
 import ChattingMain from "../pages/Chat/ChattingMain";
 
 function AppRouter() {
   return (
     <Routes>
-      {/* 1. HomeBar(하단바)가 없는 페이지들 */}
+      {/* 1. HomeBar(하단바)가 없는 페이지들 - EmptyLayout */}
       <Route element={<EmptyLayout />}>
+        {/* 로그인/회원가입 */}
         <Route path="/" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* 검색 입력 페이지 (입력 시엔 하단바가 없는 것이 일반적) */}
+        {/* 검색 관련 페이지 (하단바가 없는 것이 일반적) */}
         <Route path="/search" element={<Search />} />
-
-        {/* 검색 결과 리스트 (B파일 설정 반영) */}
+        {/* a파일의 검색 상세 경로 (파라미터 포함/미포함) */}
         <Route path="/search/detail/:query" element={<SearchDetail />} />
-
         <Route path="/search/detail" element={<SearchDetail />} />
-
+        {/* b파일의 검색 상세 경로 (search_detail) */}
+        <Route path="/search_detail" element={<SearchDetail />} />
         {/* 약 상세 정보 페이지 */}
         <Route path="/search/result/:drugId" element={<SearchResultInfo />} />
 
-        {/* 캘린더 (커스텀 하단바 제어를 위해 EmptyLayout으로 이동) */}
+        {/* 캘린더 */}
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/pill-management" element={<Calendar />} />
       </Route>
 
-      {/* 2. HomeBar(하단바)가 있는 페이지들 */}
+      {/* 2. HomeBar(하단바)가 있는 페이지들 - MainLayout */}
       <Route element={<MainLayout />}>
         {/* 서비스 메인 */}
         <Route path="/search_main" element={<SearchMain />} />
 
-        {/* 내 정보 수정 */}
-        <Route path="/edit-mypage" element={<EditMyPage />} /> {/* 내 정보 수정 페이지 등록 */}
-        <Route path="/add-family" element={<AddFamily />} /> {/* 가족 추가 페이지 */}
-        <Route path="/edit-family" element={<EditFamily />} /> {/* 가족 수정 페이지 */}
-
-        {/* 마이페이지 */}
+        {/* 마이페이지/가족 관리 */}
         <Route path="/mypage" element={<MyPageScreen />} />
+        <Route path="/edit-mypage" element={<EditMyPage />} />
+        <Route path="/add-family" element={<AddFamily />} />
+        <Route path="/edit-family" element={<EditFamily />} />
 
         {/* 지도 */}
         <Route path="/map" element={<MapMain />} />
@@ -83,8 +81,9 @@ function AppRouter() {
         {/* OCR 결과 */}
         <Route path="/ocr/result" element={<OcrResult />} />
 
-        {/* 챗봇 (하단바를 포함하는 디자인일 경우 여기에 배치) */}
+        {/* 챗봇 */}
         <Route path="/chat" element={<ChattingMain />} />
+        <Route path="/chat/history" element={<ChattingMain />} />
 
         {/* 카메라 */}
         <Route path="/search/camera" element={<SearchCamera />} />

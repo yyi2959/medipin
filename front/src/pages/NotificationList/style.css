@@ -1,0 +1,125 @@
+.notification-page {
+    width: 100%;
+    height: 100vh;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: -8px;
+}
+
+.notification-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background-color: #f9f9f9;
+}
+
+.noti-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.noti-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.noti-item:active {
+    background-color: #f0f0f0;
+}
+
+/* 완료된(읽음/복용) 항목 스타일 */
+.noti-item.completed {
+    background-color: #f8f8f8;
+    box-shadow: none;
+    border: 1px solid #eee;
+}
+
+.noti-item.completed .noti-title {
+    color: #999;
+    text-decoration: line-through;
+}
+
+.noti-item.completed .noti-desc {
+    color: #aaa;
+}
+
+.bear-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: #f0f0f0;
+    margin-right: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.bear-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.noti-info {
+    flex: 1;
+}
+
+.noti-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.noti-desc {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.noti-time {
+    font-size: 11px;
+    color: #999;
+    margin-left: 8px;
+    white-space: nowrap;
+    text-align: right;
+    min-width: 60px;
+}
+
+.loading,
+.no-data {
+    text-align: center;
+    margin-top: 40px;
+    color: #999;
+    font-size: 14px;
+}

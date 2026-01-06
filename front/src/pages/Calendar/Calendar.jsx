@@ -132,11 +132,19 @@ const Calendar = () => {
 
     const fetchSchedules = async () => {
         if (users.length === 0) return;
+
+        let year = currentMonth ? currentMonth.getFullYear() : undefined;
+        let month = currentMonth ? currentMonth.getMonth() + 1 : undefined;
+
+        // 방어 로직: 날짜가 유효하지 않으면 현재 날짜 사용
+        if (!year || isNaN(year) || !month || isNaN(month)) {
+            const now = new Date();
+            year = now.getFullYear();
+            month = now.getMonth() + 1;
+        }
+
         setLoading(true);
         try {
-            const year = currentMonth.getFullYear();
-            const month = currentMonth.getMonth() + 1;
-
             // users 배열에 있는 모든 유저(본인+가족)에 대해 스케줄 요청
             const promises = users.map(u =>
                 fetch(`${API_URL}/schedule?user_id=${u.id}&year=${year}&month=${month}`)

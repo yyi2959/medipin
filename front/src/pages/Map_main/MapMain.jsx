@@ -5,10 +5,10 @@ import MapList from "../../components/MapList/MapList";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 
-import hospitalIcon from "../../components/FilterIconGroup/Hospital_icon.svg";
-import pharmacyIcon from "../../components/FilterIconGroup/Pharmacy_icon.svg";
-import convIcon from "../../components/FilterIconGroup/Constore_icon.svg";
-import sosIcon from "../../components/FilterIconGroup/Sos_icon.svg";
+import hospitalIcon from "../../components/FilterIconGroup/Hospital_marker.svg";
+import pharmacyIcon from "../../components/FilterIconGroup/Pharmacy_marker.svg";
+import convIcon from "../../components/FilterIconGroup/Constore_marker.svg";
+import sosIcon from "../../components/FilterIconGroup/Sos_marker.svg";
 
 import "./style.css";
 

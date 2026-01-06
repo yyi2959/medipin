@@ -81,9 +81,16 @@ export const AlarmProvider = ({ children }) => {
         setLoading(true);
         try {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth() + 1;
+            let year = now.getFullYear();
+            let month = now.getMonth() + 1;
             const dayStr = now.toISOString().split('T')[0];
+
+            if (!year || isNaN(year) || !month || isNaN(month)) {
+                console.warn("Invalid date in AlarmContext, resetting to now");
+                const safeNow = new Date();
+                year = safeNow.getFullYear();
+                month = safeNow.getMonth() + 1;
+            }
 
             const res = await fetch(`${API_BASE_URL}/medication/schedule?user_id=${USER_ID}&year=${year}&month=${month}`, {
                 headers: {
