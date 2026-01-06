@@ -5,7 +5,8 @@
 // 이제 모든 요청은 프론트엔드 주소/api/... 로 전달되어 Vite가 백엔드로 넘겨줍니다.
 
 // 사용자가 지정한 ngrok 주소를 반영합니다. (Vite Proxy를 타기 위해 /api 추가)
-export const API_BASE_URL = "https://labourless-tamika-unpatrician.ngrok-free.dev/api";
+// export const API_BASE_URL = "https://labourless-tamika-unpatrician.ngrok-free.dev/api";
+export const API_BASE_URL = "/api";
 
 // 공통 요청 헤더 (JSON 응답 보장)
 export const COMMON_HEADERS = {

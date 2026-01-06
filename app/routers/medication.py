@@ -49,23 +49,87 @@ class ScheduleResponse(BaseModel):
     class Config:
         from_attributes = True
 
-@router.post("/schedule", response_model=ScheduleResponse)
+@router.post("/schedule")
 def create_schedule(schedule: ScheduleCreate, db: Session = Depends(get_db)):
-    db_schedule = MedicationSchedule(
-        user_id=schedule.user_id,
-        pill_name=schedule.pill_name,
-        dose=schedule.dose,
-        start_date=schedule.start_date,
-        end_date=schedule.end_date,
-        timing=schedule.timing,
-        meal_relation=schedule.meal_relation,
-        memo=schedule.memo,
-        notify=schedule.notify
-    )
-    db.add(db_schedule)
-    db.commit()
-    db.refresh(db_schedule)
-    return db_schedule
+    """
+    복약 일정 생성 - 시작일부터 종료일까지 매일 개별 레코드 생성
+    """
+    from datetime import timedelta
+    
+    # 날짜 검증
+    if not schedule.start_date or not schedule.end_date:
+        raise HTTPException(status_code=400, detail="start_date and end_date are required")
+    
+    if schedule.start_date > schedule.end_date:
+        raise HTTPException(status_code=400, detail="start_date must be before or equal to end_date")
+    
+    # 기간 내 모든 날짜 순회하며 레코드 생성
+    current_date = schedule.start_date
+    created_count = 0
+    skipped_count = 0
+    created_schedules = []
+    
+    while current_date <= schedule.end_date:
+        # 중복 체크: 동일 사용자, 동일 약 이름, 동일 날짜
+        existing = db.query(MedicationSchedule).filter(
+            MedicationSchedule.user_id == schedule.user_id,
+            MedicationSchedule.pill_name == schedule.pill_name,
+            MedicationSchedule.start_date == current_date
+        ).first()
+        
+        if existing:
+            skipped_count += 1
+        else:
+            # 새 레코드 생성
+            db_schedule = MedicationSchedule(
+                user_id=schedule.user_id,
+                pill_name=schedule.pill_name,
+                dose=schedule.dose,
+                start_date=current_date,
+                end_date=current_date,  # 각 레코드는 하루 단위
+                timing=schedule.timing,
+                meal_relation=schedule.meal_relation,
+                memo=schedule.memo,
+                notify=schedule.notify,
+                is_taken=False
+            )
+            db.add(db_schedule)
+            created_schedules.append(db_schedule)
+            created_count += 1
+        
+        current_date += timedelta(days=1)
+    
+    # 모든 레코드 커밋
+    if created_count > 0:
+        db.commit()
+        for sched in created_schedules:
+            db.refresh(sched)
+    
+    # 응답: 첫 번째 생성된 일정 정보 + 메타데이터
+    if created_schedules:
+        response = created_schedules[0]
+        # 메시지를 응답 객체에 추가하기 위해 dict로 변환 후 메시지 추가
+        response_dict = {
+            "id": response.id,
+            "user_id": response.user_id,
+            "pill_name": response.pill_name,
+            "dose": response.dose,
+            "start_date": response.start_date,
+            "end_date": response.end_date,
+            "timing": response.timing,
+            "meal_relation": response.meal_relation,
+            "memo": response.memo,
+            "notify": response.notify,
+            "is_taken": response.is_taken,
+            "created_at": response.created_at,
+            "message": f"총 {created_count}일간의 복약 일정이 등록되었습니다. (중복 제외: {skipped_count}건)"
+        }
+        return response_dict
+    else:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"모든 일정이 이미 등록되어 있습니다. (중복 제외: {skipped_count}건)"
+        )
 
 @router.get("/schedule", response_model=List[ScheduleResponse])
 def get_schedules(

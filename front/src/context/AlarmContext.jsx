@@ -27,7 +27,11 @@ export const AlarmProvider = ({ children }) => {
             const month = now.getMonth() + 1;
             const dayStr = now.toISOString().split('T')[0];
 
-            const res = await fetch(`${API_BASE_URL}/medication/schedule?user_id=${USER_ID}&year=${year}&month=${month}`);
+            const res = await fetch(`${API_BASE_URL}/medication/schedule?user_id=${USER_ID}&year=${year}&month=${month}`, {
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 // 오늘 날짜에 해당하는 일정만 필터링

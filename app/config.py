@@ -11,11 +11,11 @@ load_dotenv(env_path)
 
 class Settings(BaseSettings):
     APP_NAME: str = "Medipin"
-    MYSQL_USER: str = "user1"  # 프로젝트 설정에 맞춰 user1으로 변경
-    MYSQL_PASSWORD: str = "123"  # 여기에비밀번호작성 (123으로 설정됨)
-    MYSQL_HOST: str = "localhost"
+    MYSQL_USER: str = "user1"
+    MYSQL_PASSWORD: str = "123"
+    MYSQL_HOST: str = "172.16.30.14"  # .env 파일과 일치하도록 업데이트
     MYSQL_PORT: str = "3306"
-    MYSQL_DB: str = "medipin"
+    MYSQL_DB: str = "medipin_db"  # .env 파일과 일치하도록 업데이트
     REDIS_URL: str = "redis://localhost:6379"
     
     # DATABASE_URL은 초기화 시 다른 필드들을 기반으로 자동 구성됩니다.
