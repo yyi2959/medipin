@@ -56,6 +56,14 @@ export const MapMain = () => {
   const geocoderRef = useRef(null);
   const radiusCircleRef = useRef(null); // 반경 원 Overlay
 
+  // 클로저 문제 해결을 위한 Refs
+  const filtersRef = useRef(filters);
+  const keywordRef = useRef(keyword);
+
+  // 상태 동기화
+  useEffect(() => { filtersRef.current = filters; }, [filters]);
+  useEffect(() => { keywordRef.current = keyword; }, [keyword]);
+
 
   const API_URL = `${API_BASE_URL}/map`;
 
@@ -286,16 +294,18 @@ export const MapMain = () => {
     clustererRef.current.clear(); // 클러스터 비우기
 
     let targets = [];
+    const currentFilters = filtersRef.current; // Ref에서 최신 상태 참조
 
     // 필터 체크
-    if (filters.hospital) targets.push(...markersRef.current.hospital);
-    if (filters.pharmacy) targets.push(...markersRef.current.pharmacy);
-    if (filters.constore) targets.push(...markersRef.current.convenience);
-    if (filters.sos) targets.push(...markersRef.current.emergency);
+    if (currentFilters.hospital) targets.push(...markersRef.current.hospital);
+    if (currentFilters.pharmacy) targets.push(...markersRef.current.pharmacy);
+    if (currentFilters.constore) targets.push(...markersRef.current.convenience);
+    if (currentFilters.sos) targets.push(...markersRef.current.emergency);
 
     // (선택) 키워드 검색 필터링
-    if (keyword.trim()) {
-      targets = targets.filter(m => m.data.name.includes(keyword) || (m.data.address && m.data.address.includes(keyword)));
+    const currentKeyword = keywordRef.current;
+    if (currentKeyword && currentKeyword.trim()) {
+      targets = targets.filter(m => m.data.name.includes(currentKeyword) || (m.data.address && m.data.address.includes(currentKeyword)));
     }
 
     // 클러스터에 추가
@@ -427,6 +437,16 @@ export const MapMain = () => {
   useEffect(() => {
     updateRadiusCircle();
   }, [radius]);
+
+  // 선택된 장소로 지도 이동
+  useEffect(() => {
+    if (selectedPlace && mapInstance.current) {
+      const moveLatLon = new window.kakao.maps.LatLng(selectedPlace.lat, selectedPlace.lng);
+      mapInstance.current.panTo(moveLatLon);
+      // 필요 시 줌 레벨 조정
+      // mapInstance.current.setLevel(3); 
+    }
+  }, [selectedPlace]);
 
   return (
     <div className="map-main">
