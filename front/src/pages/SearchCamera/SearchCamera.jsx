@@ -9,6 +9,8 @@ export const SearchCamera = () => {
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
+
+
   const [facingMode, setFacingMode] = useState("environment");
   const [loading, setLoading] = useState(false); // 🚨 로딩 상태 추가
 

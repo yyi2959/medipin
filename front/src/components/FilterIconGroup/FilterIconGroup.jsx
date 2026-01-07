@@ -58,14 +58,16 @@ const FilterIconGroup = ({ filters, onToggle, className = "" }) => {
         <span className="label">운영중</span>
       </div>
 
-      {/* 즐겨찾기 */}
-      <div
-        className={`filter-item ${filters.favorites ? "active" : ""}`}
-        onClick={() => onToggle("favorites")}
-      >
-        <img src={FavoritesIcon} alt="즐겨찾기" className="icon" />
-        <span className="label">즐겨찾기</span>
-      </div>
+      {/* 즐겨찾기 - 로그인 시에만 표시 */}
+      {!!localStorage.getItem("authToken") && (
+        <div
+          className={`filter-item ${filters.favorites ? "active" : ""}`}
+          onClick={() => onToggle("favorites")}
+        >
+          <img src={FavoritesIcon} alt="즐겨찾기" className="icon" />
+          <span className="label">즐겨찾기</span>
+        </div>
+      )}
     </div>
   );
 };

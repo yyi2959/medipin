@@ -57,6 +57,8 @@ export const MyPageScreen = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [warningType, setWarningType] = useState(null);
 
+
+
   useEffect(() => {
     const fetchAllData = async () => {
       const token = localStorage.getItem("authToken");

@@ -79,6 +79,11 @@ const AddScheduleModal = ({ isOpen, onClose, defaultPillName }) => {
             return;
         }
 
+        if (!selectedUserId) {
+            alert("사용자 정보가 로드되지 않았습니다. 잠시 후 다시 시도하거나 다시 로그인해주세요.");
+            return;
+        }
+
         setLoading(true);
         const payload = {
             user_id: selectedUserId,

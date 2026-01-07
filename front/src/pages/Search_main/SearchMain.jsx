@@ -24,11 +24,23 @@ const SearchMain = () => {
           </div>
 
           {/* Scan 아이콘 → /search_camera */}
+          {/* Scan 아이콘 → /search_camera */}
           <img
             src={scanIcon}
             alt="scan"
             className="scan-icon"
-            onClick={() => navigate("/search/camera")}
+            style={{
+              opacity: localStorage.getItem("authToken") ? 1 : 0.5,
+              cursor: localStorage.getItem("authToken") ? "pointer" : "not-allowed"
+            }}
+            onClick={() => {
+              if (!localStorage.getItem("authToken")) {
+                alert("로그인이 필요한 서비스입니다.");
+                navigate("/login");
+                return;
+              }
+              navigate("/search/camera");
+            }}
           />
         </div>
       </div>

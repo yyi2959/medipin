@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API_BASE_URL } from "../../api/config";
+import { isAuthenticated } from "../../auth/token";
 import { HomeBar } from "../../components/HomeBar/HomeBar";
 import preIcon from "./pre_icon.svg";
 import pillPic from "./pill_pic.svg";
@@ -190,7 +191,14 @@ const SearchResultInfo = () => {
             <h1 className="drug-name-kr">{drugDetail.drug_name || drugDetail.item_name}</h1>
             <h3 className="drug-name-en">{drugDetail.item_eng_name || ""}</h3>
           </div>
-          <button className="add-btn" onClick={() => setIsModalOpen(true)}>
+          <button className="add-btn" onClick={() => {
+            if (!isAuthenticated()) {
+              alert("로그인이 필요한 서비스입니다.");
+              navigate("/login");
+              return;
+            }
+            setIsModalOpen(true);
+          }}>
             <span className="plus-icon">+</span>
           </button>
         </div>

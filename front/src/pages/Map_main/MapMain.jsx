@@ -576,10 +576,7 @@ export const MapMain = () => {
         setSelectedPlace={setSelectedPlace}
       />
 
-      {/* 하단 네비게이션 */}
-      <div className="bottom-nav-container">
-        <HomeBar />
-      </div>
+      {/* HomeBar removed (handled by MainLayout) */}
     </div>
   );
 };

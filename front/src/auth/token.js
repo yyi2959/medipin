@@ -31,3 +31,8 @@ export function isTokenExpired(token) {
         return true;
     }
 }
+
+export function isAuthenticated() {
+    const token = getAccessToken();
+    return token && !isTokenExpired(token);
+}

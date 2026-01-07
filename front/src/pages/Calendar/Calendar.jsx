@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // ✅ useNavigate 추가
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, parseISO, parse } from "date-fns";
-import { HomeBar } from "../../components/HomeBar/HomeBar";
+
 import { API_BASE_URL } from "../../api/config";
 /* 아이콘들 */
 import preIcon from "../Search_detail/pre_icon.svg";
@@ -14,6 +14,9 @@ const Calendar = () => {
     // 날짜 상태
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
+
+
+
 
     // URL 쿼리 파라미터로 전달된 날짜가 있으면 해당 날짜로 이동
     useEffect(() => {
@@ -193,6 +196,11 @@ const Calendar = () => {
     const handleSubmit = async () => {
         if (!formData.pill_name) {
             alert("Pill name is required");
+            return;
+        }
+
+        if (!selectedUserId) {
+            alert("User information is missing. Please re-login or wait a moment.");
             return;
         }
 
@@ -903,9 +911,7 @@ const Calendar = () => {
                 )}
             </div>
 
-            <div className="bottom-nav-container" style={{ display: (sheetHeight > 5 || isAddMode || detailSheetOpen) ? 'none' : 'block' }}>
-                <HomeBar />
-            </div>
+
         </div >
     );
 };

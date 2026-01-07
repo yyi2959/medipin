@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 /* layouts */
 import MainLayout from "../layouts/MainLayout";
 import EmptyLayout from "../layouts/EmptyLayout";
+import ProtectRoute from "../auth/ProtectRoute";
 
 /* pages */
 import Welcome from "../pages/Welcome/Welcome";
@@ -41,56 +42,53 @@ import ChattingMain from "../pages/Chat/ChattingMain";
 function AppRouter() {
   return (
     <Routes>
-      {/* 1. HomeBar(하단바)가 없는 페이지들 - EmptyLayout */}
-      <Route element={<EmptyLayout />}>
+      {/* 모든 페이지에 하단바 적용 (MainLayout 통합) */}
+      <Route element={<MainLayout />}>
         {/* 로그인/회원가입 */}
         <Route path="/" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* 검색 관련 페이지 (하단바가 없는 것이 일반적) */}
+        {/* 검색 관련 페이지 */}
         <Route path="/search" element={<Search />} />
-        {/* a파일의 검색 상세 경로 (파라미터 포함/미포함) */}
         <Route path="/search/detail/:query" element={<SearchDetail />} />
         <Route path="/search/detail" element={<SearchDetail />} />
-        {/* b파일의 검색 상세 경로 (search_detail) */}
         <Route path="/search_detail" element={<SearchDetail />} />
         {/* 약 상세 정보 페이지 */}
         <Route path="/search/result/:drugId" element={<SearchResultInfo />} />
-
-        {/* 캘린더 */}
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/pill-management" element={<Calendar />} />
-
-        {/* 알림 목록 페이지 */}
-        <Route path="/notifications" element={<NotificationList />} />
-
-        {/* 챗봇 */}
-        <Route path="/chat" element={<ChattingMain />} />
-        <Route path="/chat/history" element={<ChattingMain />} />
-      </Route>
-
-      {/* 2. HomeBar(하단바)가 있는 페이지들 - MainLayout */}
-      <Route element={<MainLayout />}>
-        {/* 서비스 메인 */}
+        {/* 서비스 메인 (Public) */}
         <Route path="/search_main" element={<SearchMain />} />
 
-        {/* 마이페이지/가족 관리 */}
-        <Route path="/mypage" element={<MyPageScreen />} />
-        <Route path="/edit-mypage" element={<EditMyPage />} />
-        <Route path="/add-family" element={<AddFamily />} />
-        <Route path="/edit-family" element={<EditFamily />} />
-
-        {/* 지도 */}
+        {/* 지도 (Public) */}
         <Route path="/map" element={<MapMain />} />
         <Route path="/map/detail/:name" element={<MapRInfo />} />
 
-        {/* OCR 결과 */}
-        <Route path="/ocr/result" element={<OcrResult />} />
+        {/* Protected Routes */}
+        <Route element={<ProtectRoute />}>
+          {/* 마이페이지/가족 관리 */}
+          <Route path="/mypage" element={<MyPageScreen />} />
+          <Route path="/edit-mypage" element={<EditMyPage />} />
+          <Route path="/add-family" element={<AddFamily />} />
+          <Route path="/edit-family" element={<EditFamily />} />
 
-        {/* 카메라 */}
-        <Route path="/search/camera" element={<SearchCamera />} />
+          {/* 캘린더 */}
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/pill-management" element={<Calendar />} />
+
+          {/* 알림 목록 페이지 */}
+          <Route path="/notifications" element={<NotificationList />} />
+
+          {/* OCR 결과 */}
+          <Route path="/ocr/result" element={<OcrResult />} />
+
+          {/* 챗봇 */}
+          <Route path="/chat" element={<ChattingMain />} />
+          <Route path="/chat/history" element={<ChattingMain />} />
+
+          {/* 카메라 */}
+          <Route path="/search/camera" element={<SearchCamera />} />
+        </Route>
       </Route>
 
       {/* 404 처리 */}

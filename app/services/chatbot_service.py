@@ -127,6 +127,9 @@ def create_schedule(db: Session, user_id: int, data: dict, user_name: str) -> st
         dose = data.get('dose', '1회')
         
         print(f"[DEBUG] create_schedule: Pill={pill_name}, Date={start_date}, User={user_name}")
+        
+        if not user_id:
+            raise ValueError("User ID cannot be None when creating schedule")
 
         # 2. MedicationSchedule 등록
         new_schedule = MedicationSchedule(
