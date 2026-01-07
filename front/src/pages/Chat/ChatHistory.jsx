@@ -97,13 +97,49 @@ export const ChatHistory = () => {
     // If there's an error or no history, handle empty state
     const hasHistory = history && history.length > 0;
 
-    const displayHistory = hasHistory ? history.map((item, index) => ({
-        id: item.id || index,
-        message: item.message,
-        time: formatTime(item.created_at),
-        unread: !item.is_read && item.sender === 'bot' ? 1 : 0,
-        sender: item.sender
-    })) : [
+    const groupHistory = (msgs) => {
+        if (!msgs || msgs.length === 0) return [];
+
+        // Sort by created_at ascending to group chronologically
+        const sorted = [...msgs].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+        const groups = [];
+        let currentGroup = null;
+        const SESSION_THRESHOLD = 60 * 60 * 1000; // 1 hour
+
+        sorted.forEach(msg => {
+            const msgTime = new Date(msg.created_at).getTime();
+
+            if (!currentGroup || (msgTime - currentGroup.lastTime > SESSION_THRESHOLD)) {
+                currentGroup = {
+                    id: msg.id,
+                    message: msg.message,
+                    time: formatTime(msg.created_at),
+                    unread: (!msg.is_read && msg.sender === 'bot') ? 1 : 0,
+                    sender: msg.sender, // Latest sender
+                    created_at: msg.created_at,
+                    lastTime: msgTime,
+                    messages: [msg]
+                };
+                groups.push(currentGroup);
+            } else {
+                // Update with latest message in this session
+                currentGroup.message = msg.message;
+                currentGroup.time = formatTime(msg.created_at);
+                currentGroup.sender = msg.sender;
+                currentGroup.lastTime = msgTime;
+                if (!msg.is_read && msg.sender === 'bot') {
+                    currentGroup.unread += 1;
+                }
+                currentGroup.messages.push(msg);
+            }
+        });
+
+        // Return reversed so latest conversation is at top
+        return groups.reverse();
+    };
+
+    const displayHistory = hasHistory ? groupHistory(history) : [
         { id: 1, message: "아직 대화 내역이 없습니다. 메시지를 보내보세요!", time: "now", unread: 0, sender: 'bot' }
     ];
 
@@ -119,9 +155,7 @@ export const ChatHistory = () => {
                         style={{ cursor: "pointer" }}
                     >
                         <div className="avatar-section">
-                            {item.sender === 'bot' && (
-                                <img src={bearIcon} alt="Avatar" className="bear-avatar" />
-                            )}
+                            <img src={bearIcon} alt="Avatar" className="bear-avatar" />
                         </div>
                         <div className="info-section">
                             <div className="info-top">

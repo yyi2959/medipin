@@ -5,6 +5,7 @@ import { HomeBar } from "../../components/HomeBar/HomeBar";
 import { API_BASE_URL } from "../../api/config";
 /* 아이콘들 */
 import preIcon from "../Search_detail/pre_icon.svg";
+import alarmIcon from "../../components/Element/alarm_icon.svg";
 import "./style.css";
 
 const Calendar = () => {
@@ -570,7 +571,9 @@ const Calendar = () => {
                     <BackIcon />
                 </button>
                 <div className="header-title">Calendar</div>
-                <div style={{ width: 24 }}></div>
+                <div style={{ width: 36, height: 36, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={() => navigate("/notifications")}>
+                    <img src={alarmIcon} alt="alarm" style={{ width: 24, height: 24 }} />
+                </div>
             </div>
 
             <div className="calendar-content-sheet"

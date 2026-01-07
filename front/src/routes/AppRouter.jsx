@@ -65,6 +65,10 @@ function AppRouter() {
 
         {/* 알림 목록 페이지 */}
         <Route path="/notifications" element={<NotificationList />} />
+
+        {/* 챗봇 */}
+        <Route path="/chat" element={<ChattingMain />} />
+        <Route path="/chat/history" element={<ChattingMain />} />
       </Route>
 
       {/* 2. HomeBar(하단바)가 있는 페이지들 - MainLayout */}
@@ -84,10 +88,6 @@ function AppRouter() {
 
         {/* OCR 결과 */}
         <Route path="/ocr/result" element={<OcrResult />} />
-
-        {/* 챗봇 */}
-        <Route path="/chat" element={<ChattingMain />} />
-        <Route path="/chat/history" element={<ChattingMain />} />
 
         {/* 카메라 */}
         <Route path="/search/camera" element={<SearchCamera />} />

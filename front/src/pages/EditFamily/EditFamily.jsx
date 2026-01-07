@@ -1,13 +1,21 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAlarm } from "../../context/AlarmContext";
 import "../MyPage/style.css"; // Reuse MyPage styles
 import { API_BASE_URL } from "../../api/config";
 
 const EditFamily = () => {
     const navigate = useNavigate();
+    const { toggleOverlay } = useAlarm();
     const location = useLocation();
     const initialData = location.state || {}; // Passed from MyPage
+
+    const BackIcon = () => (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18L9 12L15 6" />
+        </svg>
+    );
 
     const [formData, setFormData] = useState({
         name: "",
@@ -111,11 +119,17 @@ const EditFamily = () => {
     }
 
     return (
-        <div className="my-page-container" style={{ backgroundColor: 'white' }}>
-            <div className="mypage-header" style={{ backgroundColor: '#9F63FF' }}>
-                <button onClick={() => navigate(-1)} className="back-btn">⬅</button>
+        <div className="my-page-container">
+            <div className="mypage-header">
+                <div style={{ width: 56, display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                    <button onClick={() => navigate(-1)} className="mypage-back-btn">
+                        <BackIcon />
+                    </button>
+                </div>
                 <div className="header-title">Edit Family</div>
-                <div style={{ width: 24 }}></div>
+                <div className="icon-wrapper" onClick={toggleOverlay}>
+                    <div className="icon-alarm" />
+                </div>
             </div>
 
             <div className="content-scrollable" style={{ marginTop: 0, paddingTop: 20 }}>
